@@ -1,7 +1,7 @@
 const boom = require('@hapi/boom');
 
 //const { getConnection } = require('../libs/postgres.js');
-const { sequelize } = require('./../libs/sequelize');
+const { sequelize } = require('../database/sequelize');
 const bcrypt = require("bcrypt");
 
 

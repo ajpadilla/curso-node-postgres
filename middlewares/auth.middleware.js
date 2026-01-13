@@ -3,7 +3,7 @@
 
 const boom = require('@hapi/boom');
 
-const { config } = require('./../config/config');
+const { config } = require('../config/env');
 
 function checkApiKey(req, res, next) {
   const apiKey = req.headers['api'];

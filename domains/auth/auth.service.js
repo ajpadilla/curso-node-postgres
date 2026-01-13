@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const { config } = require('./../config/config');
+const { config } = require('../config/env');
 const UserService = require('./user.service');
 const service = new UserService();
 

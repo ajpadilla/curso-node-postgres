@@ -1,4 +1,4 @@
-const { config } = require('./../config/config');
+const { config } = require('../config/env');
 
 const USER = encodeURIComponent(config.dbUser);
 const PASSWORD = encodeURIComponent(config.dbPassword);
