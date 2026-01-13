@@ -1,8 +1,8 @@
-const { config } = require('../config/env');
+const { config: database } = require('./env');
 
-const USER = encodeURIComponent(config.dbUser);
-const PASSWORD = encodeURIComponent(config.dbPassword);
-const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+const USER = encodeURIComponent(database.dbUser);
+const PASSWORD = encodeURIComponent(database.dbPassword);
+const URI = `postgres://${USER}:${PASSWORD}@${database.dbHost}:${database.dbPort}/${database.dbName}`;
 
 module.exports = {
   development: {
