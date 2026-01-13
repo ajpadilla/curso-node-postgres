@@ -1,5 +1,3 @@
-version: '3.3'
-
 services:
   postgres_node_platzi:
     image: postgres:13
