@@ -1,10 +1,10 @@
 const express = require('express');
 
-const CategoryService = require('./../services/category.service');
-const validatorHandler = require('./../middlewares/validator.handler');
-const { createCategorySchema, updateCategorySchema, getCategorySchema } = require('./../schemas/category.schema');
+const CategoryService = require('./category.service');
+const validatorHandler = require('../../middlewares/validator.handler');
+const { createCategorySchema, updateCategorySchema, getCategorySchema } = require('./category.schema');
 const passport = require("passport");
-const {checkAdminRole, checkRoles} = require("../middlewares/auth.handler");
+const {checkAdminRole, checkRoles} = require("../../middlewares/auth.middleware");
 
 const router = express.Router();
 const service = new CategoryService();

@@ -3,8 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
-const { config } = require('../config/env');
-const UserService = require('./user.service');
+const { config } = require('../../config/env');
+const UserService = require('../users/user.service');
 const service = new UserService();
 
 class AuthService {

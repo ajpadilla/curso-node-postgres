@@ -1,6 +1,6 @@
 const boom = require('@hapi/boom');
 
-const { sequelize } = require('../database/sequelize');
+const { sequelize } = require('../../database/sequelize');
 
 class OrderService {
 
