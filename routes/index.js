@@ -1,12 +1,12 @@
 const express = require('express');
 
-const productsRouter = require('./products.router');
-const categoriesRouter = require('./categories.router');
-const usersRouter = require('./users.router');
-const orderRouter = require('./orders.router');
-const customersRouter = require('./customers.router');
-const authRouter = require('./auth.router');
-const profileRouter = require('./profile.router');
+const productsRouter = require('../domains/products/products.router');
+const categoriesRouter = require('../domains/categories/categories.router');
+const usersRouter = require('../domains/users/users.router');
+const orderRouter = require('../domains/orders/orders.router');
+const customersRouter = require('../domains/customers/customers.router');
+const authRouter = require('../domains/auth/auth.router');
+const profileRouter = require('../domains/profile/profile.router');
 
 function routerApi(app) {
   const router = express.Router();
