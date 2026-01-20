@@ -1,5 +1,5 @@
 // tests/infrastructure/postgres.client.test.js
-const { getConnection } = require('../../database/postgres.client');
+const { getConnection } = require('../../../database/postgres.client');
 
 describe('Postgres Client', () => {
   let client;

@@ -1,8 +1,9 @@
-const SequelizeUserRepositoryTest = require('../../../../ecommerce/infrastructure/persistence/sequelize/sequelize-user.repository');
-const UserService = require('../../../../ecommerce/application/user/user.service');
-const { sequelize } = require('../../../../database/sequelize'); // adjust path
+const SequelizeUserRepository = require('../../../../../ecommerce/infrastructure/persistence/sequelize/sequelize-user.repository');
+const UserService = require('../../../../../ecommerce/application/user/user.service');
+const { sequelize } = require('../../../../../database/sequelize'); // adjust path
 
-const { User } = require('../../../../database/models/user.model'); // your User model
+const { User } = require('../../../../../database/models/user.model');
+const BcryptPasswordHasher = require("../../../../../ecommerce/infrastructure/security/bcrypt.password-hasher"); // your User model
 
 beforeEach(async () => {
   // truncate the user table before each test
@@ -14,10 +15,12 @@ afterAll(async () => {
 });
 
 it('creates user in database', async () => {
-  const repo = new SequelizeUserRepositoryTest();
-  const service = new UserService(repo);
+  const userRepository = new SequelizeUserRepository();
+  const passwordHasher = new BcryptPasswordHasher();
 
-  const user = await service.create({
+  const userService = new UserService(userRepository, passwordHasher);
+
+  const user = await userService.create({
     email: 'test@test.com',
     password: '123'
   });
