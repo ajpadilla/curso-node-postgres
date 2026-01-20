@@ -1,7 +1,7 @@
 const express = require('express');
-const validatorHandler = require('../../infrastructure/http/middlewares/validator.handler');
+const validatorHandler = require('../../middlewares/validator.handler');
 const { updateUserSchema, createUserSchema, getUserSchema } = require('./user.schema');
-const { httpErrorMapper } = require("../../infrastructure/http/error-mapper");
+const { httpErrorMapper } = require("../../error-mapper");
 function createUserRouter(userService) {
   const router = express.Router();
 
