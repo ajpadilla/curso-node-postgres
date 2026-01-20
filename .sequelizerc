@@ -1,6 +1,8 @@
+const path = require('path');
+
 module.exports = {
-  'env': './db/env.js',
-  'models-path': './db/models/',
-  'migrations-path': './db/migrations/',
-  'seeders-path': './db/seeders/'
-}
+  'config': path.resolve('config', 'config.json'),            // config stays in config folder
+  'models-path': path.resolve('database', 'models'),         // models inside database/models
+  'seeders-path': path.resolve('database', 'seeders'),       // seeders inside database/seeders
+  'migrations-path': path.resolve('database', 'migrations')  // migrations inside database/migrations
+};
