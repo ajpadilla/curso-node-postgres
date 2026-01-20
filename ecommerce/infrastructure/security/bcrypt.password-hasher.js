@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const PasswordHasher = require('../../domains/users/security/password.hasher');
+const PasswordHasher = require('../../../shared/infrastructure/security/password.hasher');
 
 class BcryptPasswordHasher extends PasswordHasher {
   async hash(plain) {

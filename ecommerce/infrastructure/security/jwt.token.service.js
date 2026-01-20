@@ -1,11 +1,19 @@
-class TokenService {
+const TokenService = require("../../../shared/infrastructure/security/token.service");
+const jwt = require('jsonwebtoken');
+class JwtTokenService extends TokenService {
+  constructor(secret) {
+    super();
+    this.secret = secret;
+  }
+
   sign(payload) {
-    throw new Error('Not implemented');
+    return jwt.sign(payload, this.secret, { expiresIn: '1h' });
   }
 
   verify(token) {
-    throw new Error('Not implemented');
+    return jwt.verify(token, this.secret);
   }
 }
 
-module.exports = TokenService;
+module.exports = JwtTokenService;
+
