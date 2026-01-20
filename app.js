@@ -1,9 +1,9 @@
 // src/app.js
 const express = require('express');
 const cors = require('cors');
-const routerApi = require('./routes');
-const { checkApiKey } = require('./middlewares/auth.middleware');
-const { logErrors, errorHandler, boomErrorHandler, ormErrorHandler } = require('./middlewares/error.middleware');
+const routerApi = require('./ecommerce/bootstrap/container');
+const { checkApiKey } = require('./ecommerce/infrastructure/http/middlewares/auth.middleware');
+const { logErrors, errorHandler, boomErrorHandler, ormErrorHandler } = require('./ecommerce/infrastructure/http/middlewares/error.middleware');
 
 require('./utils/auth'); // passport strategies
 
