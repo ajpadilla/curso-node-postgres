@@ -1,4 +1,4 @@
-const UserRepository = require('../../../domains/users/repositories/user.repository');
+const UserRepository = require('../../../domain/user/repositories/user.repository');
 const { sequelize } = require('../../../../database/sequelize');
 
 class SequelizeUserRepository extends UserRepository {
