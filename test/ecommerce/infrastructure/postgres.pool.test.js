@@ -1,5 +1,5 @@
 // test/infrastructure/postgres.pool.test.js
-const { pool } = require('../../database/postgres.pool');
+const { pool } = require('../../../database/postgres.pool');
 
 describe('Postgres Pool', () => {
   afterAll(async () => {
