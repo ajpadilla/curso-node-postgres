@@ -1,7 +1,19 @@
-class Mailer {
+const nodemailer = require('nodemailer');
+const Mailer = require("../../../shared/infrastructure/mail/mailer");
+
+class NodemailerMailer extends Mailer {
+  constructor(config) {
+    super();
+    this.transporter = nodemailer.createTransport(config);
+  }
+
   async send({ to, subject, html }) {
-    throw new Error('Not implemented');
+    await this.transporter.sendMail({
+      to,
+      subject,
+      html,
+    });
   }
 }
 
-module.exports = Mailer;
+module.exports = NodemailerMailer;

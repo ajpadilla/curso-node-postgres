@@ -1,7 +1,7 @@
 const NotFoundError = require("./errors/notfound.error");
 const ApplicationError = require("./errors/application.error");
 const ConflictError = require("./errors/conflict.error");
-const {ValidationError} = require("./errors/validation.error");
+const ValidationError = require("./errors/validation.error");
 
 class UserService {
   constructor(userRepository, passwordHasher) {
@@ -25,7 +25,7 @@ class UserService {
       password: hash,
     });
 
-    delete user.dataValues?.password;
+    delete user.password;
     return user;
   }
 
