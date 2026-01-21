@@ -1,5 +1,5 @@
 // src/application/auth/AuthService.js
-const UnauthorizedError = require('./errors/UnauthorizedError');
+const UnauthorizedError = require('../auth/errors/unauthorized.error');
 
 class AuthService {
   constructor({ userRepository, passwordHasher, tokenService, mailer }) {
