@@ -1,0 +1,27 @@
+const InMemoryUserRepository = require("../../../../toolkit/fakes/in-memory.repository");
+const FakePasswordHasher =  require("../../../../toolkit/fakes/fake-password-hasher");
+const AuthService = require("../../../../../ecommerce/application/auth/auth.service");
+
+it('authenticates a user using in-memory repository', async () => {
+  const passwordHasher = new FakePasswordHasher();
+
+  const userRepository = new InMemoryUserRepository({
+    users: [{
+      id: 1,
+      email: 'test@test.com',
+      password: await passwordHasher.hash('123'),
+      role: 'user',
+    }],
+  });
+
+  const service = new AuthService({
+    userRepository,
+    passwordHasher,
+    tokenService: {},
+    mailer: {},
+  });
+
+  const user = await service.authenticate('test@test.com', '123');
+
+  expect(user.email).toBe('test@test.com');
+});

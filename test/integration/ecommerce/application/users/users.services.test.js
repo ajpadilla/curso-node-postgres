@@ -1,5 +1,5 @@
-const UserService = require("../../../../ecommerce/application/user/user.service");
-const {InMemoryRepository, usersFixture} = require('../../../toolkit');
+const UserService = require("../../../../../ecommerce/application/user/user.service");
+const {InMemoryRepository, usersFixture} = require('../../../../toolkit');
 describe('UserService', () => {
   it('hashes password before saving using a mock', async () => {
 
