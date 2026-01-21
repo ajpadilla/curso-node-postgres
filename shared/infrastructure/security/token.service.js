@@ -1,5 +1,3 @@
-const TokenService = require("../../../ecommerce/infrastructure/security/jwt.token.service");
-
 
 class TokenService {
   sign(payload) {
