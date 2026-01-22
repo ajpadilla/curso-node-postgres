@@ -1,6 +1,6 @@
 const request = require('supertest');
 const express = require('express');
-const createUserRouter = require('../../../../ecommerce/infrastructure/http/routes/user/users.router');
+const createUserRouter = require('../../../../../ecommerce/infrastructure/http/routes/user/users.router');
 
 describe('GET /user', () => {
   it('returns user', async () => {

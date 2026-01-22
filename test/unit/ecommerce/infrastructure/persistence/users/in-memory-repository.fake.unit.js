@@ -1,7 +1,7 @@
 const {
   InMemoryRepository,
   UserBuilder,
-} = require('../../../toolkit');
+} = require('../../../../../toolkit');
 
 describe('Get user', () => {
   it('returns all user', async () => {
