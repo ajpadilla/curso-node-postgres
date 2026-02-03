@@ -9,9 +9,14 @@ The password is securely hashed before storing in the database.
 - Validation of input data
 - Error handling for common problems (duplicate email, invalid data)
 
-## Key Files
-- `users.router.js` → HTTP routes for user creation
-- `user.service.js` → Handles business logic
-- `sequelize-user.repository.js` → Persists user in database
-- `bcrypt.password-hasher.js` → Hashes passwords
-- `error-mapper.js` → Maps internal errors to HTTP responses
+---
+
+## Related Architecture
+See: ../_Shared/Architecture.md
+
+---
+
+## High-Level Flow
+
+```txt
+Client → Router → Middleware → Service → Repository → Response
