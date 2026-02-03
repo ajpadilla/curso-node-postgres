@@ -8,7 +8,8 @@ const AuthService = require("../application/auth/auth.service");
 const passport = require("passport");
 const JwtTokenService = require("../infrastructure/security/jwt.token.service");
 const NodemailerMailer = require("../infrastructure/mail/node.mailer.mailer");
-const configurePassport = require("..//infrastructure/auth/passport/passport.factory");
+const configurePassport = require("../infrastructure/auth/passport/passport.factory");
+const AuthRouter = require("../infrastructure/http/routes/auth/auth.router");
 
 const userRepository = new SequelizeUserRepository();
 const bcryptPasswordHasher = new BcryptPasswordHasher();
@@ -39,10 +40,21 @@ configurePassport(passport, {
   jwtSecret: process.env.JWT_SECRET,
 });
 
+const authenticate = passport.authenticate('local', {
+  session: false,
+});
+
+const authRouter = new AuthRouter({
+  authService,
+  authenticate,
+});
+
+
 function routerApi(app) {
   const router = express.Router();
   app.use('/api/v1', router);
   router.use('/user', createUserRouter(userService));
+  router.use('/auth', authRouter.getRouter());
 }
 
 module.exports = routerApi;
