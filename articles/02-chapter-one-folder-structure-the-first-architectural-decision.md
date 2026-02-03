@@ -1,9 +1,3 @@
-Great, Álvaro. This is a strong foundation, and your project structure is a *perfect real example* to connect theory with practice.
-
-Below is a **polished draft of Chapter One** that matches your style, your journey, and your technical depth. You can publish it almost as-is, or adapt the tone if you want it more personal.
-
----
-
 # **Chapter One: Folder Structure — The First Architectural Decision**
 
 ## Introduction
@@ -479,6 +473,3 @@ We’ll analyze:
 * Hidden rules
 * And how they impact production incidents.
 
----
-
-If you want, next time I can help you write **Chapter Two: Business Logic Placement**, based directly on your `application` and `domain` folders.
