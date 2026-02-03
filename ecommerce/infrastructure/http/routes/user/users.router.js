@@ -32,8 +32,8 @@ function createUserRouter(userService) {
     async (req, res, next) => {
       try {
         const body = req.body;
-        const newCategory = await userService.create(body);
-        res.status(201).json(newCategory);
+        const user = await userService.create(body);
+        res.status(201).json(user);
       } catch (error) {
         next(httpErrorMapper(error));
       }
