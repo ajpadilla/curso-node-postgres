@@ -1,5 +1,5 @@
 // application/errors/conflict.error.js
-const ApplicationError = require('./application.error');
+const ApplicationError = require('../../errors/application.error');
 
 class ConflictError extends ApplicationError {
   toHttp() {

@@ -1,5 +1,5 @@
 // application/errors/not-found.error.js
-const ApplicationError = require('./application.error');
+const ApplicationError = require('../../errors/application.error');
 
 class NotFoundError extends ApplicationError {
   toHttp() {

@@ -1,5 +1,6 @@
 // src/application/auth/AuthService.js
 const UnauthorizedError = require('../auth/errors/unauthorized.error');
+const jwt = require("jsonwebtoken");
 
 class AuthService {
   constructor({ userRepository, passwordHasher, tokenService, mailer }) {
@@ -12,12 +13,12 @@ class AuthService {
   async authenticate(email, password) {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedError();
+      throw new UnauthorizedError("Unauthorized User");
     }
 
     const valid = await this.passwordHasher.compare(password, user.password);
     if (!valid) {
-      throw new UnauthorizedError();
+      throw new UnauthorizedError("Unauthorized User");
     }
 
     return user;
@@ -28,6 +29,9 @@ class AuthService {
       sub: user.id,
       role: user.role,
     });
+  }
+  verifyToken(token) {
+    return this.tokenService.verify(token);
   }
 }
 

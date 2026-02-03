@@ -1,5 +1,5 @@
 const NotFoundError = require("./errors/notfound.error");
-const ApplicationError = require("./errors/application.error");
+const ApplicationError = require("../errors/application.error");
 const ConflictError = require("./errors/conflict.error");
 const ValidationError = require("./errors/validation.error");
 

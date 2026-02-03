@@ -1,5 +1,5 @@
 // application/errors/validation.error.js
-const ApplicationError = require('./application.error');
+const ApplicationError = require('../../errors/application.error');
 
 class ValidationError extends ApplicationError {
   toHttp() {
