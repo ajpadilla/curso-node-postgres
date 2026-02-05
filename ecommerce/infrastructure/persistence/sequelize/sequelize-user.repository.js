@@ -8,7 +8,8 @@ class SequelizeUserRepository extends UserRepository {
 
   async findAll() {
     return await sequelize.models.User.findAll({
-      include: ['customer']
+      attributes: { exclude: ['password'] },
+      include: ['customer'],
     });
   }
 
@@ -18,7 +19,7 @@ class SequelizeUserRepository extends UserRepository {
 
   async findByEmail(email) {
     return await sequelize.models.User.findOne({
-      where: { email }
+      where: { email },
     });
   }
 

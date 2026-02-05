@@ -8,6 +8,6 @@ module.exports = function createJwtStrategy({ secret }) {
     },
     async (payload, done) => {
       return done(null, payload);
-    }
+    },
   );
 };

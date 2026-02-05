@@ -1,5 +1,5 @@
 const { Strategy } = require('passport-local');
-const {httpErrorMapper} = require("../../http/error-mapper");
+const { httpErrorMapper } = require('../../http/error-mapper');
 
 module.exports = function createLocalStrategy(authService) {
   return new Strategy(
@@ -14,6 +14,6 @@ module.exports = function createLocalStrategy(authService) {
       } catch (error) {
         done(httpErrorMapper(error), false);
       }
-    }
+    },
   );
 };

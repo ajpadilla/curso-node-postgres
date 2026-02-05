@@ -3,18 +3,21 @@ const express = require('express');
 const createUserRouter = require('../infrastructure/http/routes/user/users.router');
 const UserService = require('../application/user/user.service');
 const SequelizeUserRepository = require('../infrastructure/persistence/sequelize/sequelize-user.repository');
-const BcryptPasswordHasher = require("../infrastructure/security/bcrypt.password-hasher");
-const AuthService = require("../application/auth/auth.service");
-const passport = require("passport");
-const JwtTokenService = require("../infrastructure/security/jwt.token.service");
-const NodemailerMailer = require("../infrastructure/mail/node.mailer.mailer");
-const configurePassport = require("../infrastructure/auth/passport/passport.factory");
-const AuthRouter = require("../infrastructure/http/routes/auth/auth.router");
+const BcryptPasswordHasher = require('../infrastructure/security/bcrypt.password-hasher');
+const AuthService = require('../application/auth/auth.service');
+const passport = require('passport');
+const JwtTokenService = require('../infrastructure/security/jwt.token.service');
+const NodemailerMailer = require('../infrastructure/mail/node.mailer.mailer');
+const configurePassport = require('../infrastructure/auth/passport/passport.factory');
+const AuthRouter = require('../infrastructure/http/routes/auth/auth.router');
+const authSessionMiddleware = require('../infrastructure/http/middlewares/auth-session.middleware');
+const ViewRouter = require('../infrastructure/http/routes/view/view.router');
+const WinstonLogger = require('../infrastructure/logger/WinstonLogger');
+const createErrorHandlers = require('../infrastructure/http/middlewares/error.middleware');
 
 const userRepository = new SequelizeUserRepository();
 const bcryptPasswordHasher = new BcryptPasswordHasher();
 const userService = new UserService(userRepository, bcryptPasswordHasher);
-
 
 const passwordHasher = new BcryptPasswordHasher();
 const tokenService = new JwtTokenService(process.env.JWT_SECRET);
@@ -49,12 +52,27 @@ const authRouter = new AuthRouter({
   authenticate,
 });
 
+const authMiddleware = authSessionMiddleware(authService);
+
+const viewRouter = new ViewRouter({
+  authMiddleware,
+});
+
+const logger = new WinstonLogger();
+
+const errorHandlers = createErrorHandlers(logger);
 
 function routerApi(app) {
   const router = express.Router();
   app.use('/api/v1', router);
   router.use('/user', createUserRouter(userService));
   router.use('/auth', authRouter.getRouter());
+
+  // Views
+  router.use('/', viewRouter.getRouter());
 }
 
-module.exports = routerApi;
+module.exports = {
+  routerApi,
+  errorHandlers,
+};

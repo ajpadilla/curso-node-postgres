@@ -1,5 +1,5 @@
 const express = require('express');
-const {httpErrorMapper} = require("../../error-mapper");
+const { httpErrorMapper } = require('../../error-mapper');
 
 class AuthRouter {
   constructor({ authService, authenticate }) {
@@ -11,67 +11,12 @@ class AuthRouter {
   }
 
   initializeRoutes() {
+    this.router.post('/login', this.authenticate, this.login.bind(this));
 
-    this.router.get(
-      '/dashboard',
-
-      (req, res, next) => {
-        const token = req.cookies.access_token;
-
-        if (!token) {
-          return res.redirect('/api/v1/auth/login');
-        }
-
-        try {
-          const payload = this.service.verifyToken(token);
-
-          req.user = payload;
-          next();
-
-        } catch (err) {
-          return res.redirect('/api/v1/auth/login');
-        }
-      },
-
-      this.viewAuth.bind(this)
-    );
-
-    this.router.get(
-      '/login',
-      this.loginView.bind(this)
-    );
-
-    this.router.post(
-      '/login',
-      this.authenticate,
-      this.login.bind(this)
-    );
-
-    this.router.post(
-      '/recovery',
-      this.recovery.bind(this)
-    );
+    this.router.post('/recovery', this.recovery.bind(this));
 
     // ✅ ADD THIS
-    this.router.get(
-      '/logout',
-      this.logout.bind(this)
-    );
-  }
-
-  async loginView( req, res) {
-    res.render('auth/login', {
-      title: 'Login',
-      sidebar: 'Auth Menu'
-    });
-  }
-
-  async viewAuth(req, res) {
-    res.render('dashboard', {
-      title: 'Dashboard',
-      user: req.user,
-      sidebar: 'Dashboard Menu'
-    });
+    this.router.get('/logout', this.logout.bind(this));
   }
 
   async login(req, res, next) {
@@ -80,12 +25,12 @@ class AuthRouter {
       const token = this.service.signToken(user);
 
       res.cookie('access_token', token, {
-        httpOnly: true,   // JS cannot read it
-        secure: false,    // true in production (https)
-        sameSite: 'lax'
+        httpOnly: true, // JS cannot read it
+        secure: false, // true in production (https)
+        sameSite: 'lax',
       });
 
-      res.status(200).json({ token,});
+      res.status(200).json({ token });
     } catch (error) {
       // eslint-disable-next-line no-console
       next(httpErrorMapper(error));
@@ -106,8 +51,7 @@ class AuthRouter {
 
   async logout(req, res) {
     res.clearCookie('access_token');
-
-    return res.redirect('/api/v1/auth/login');
+    return res.redirect('/api/v1/login');
   }
 
   getRouter() {

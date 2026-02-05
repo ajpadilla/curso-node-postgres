@@ -1,4 +1,4 @@
-const TokenService = require("../../../shared/infrastructure/security/token.service");
+const TokenService = require('../../../shared/infrastructure/security/token.service');
 const jwt = require('jsonwebtoken');
 class JwtTokenService extends TokenService {
   constructor(secret) {
@@ -16,4 +16,3 @@ class JwtTokenService extends TokenService {
 }
 
 module.exports = JwtTokenService;
-

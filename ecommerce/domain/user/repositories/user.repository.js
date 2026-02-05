@@ -1,5 +1,5 @@
 class UserRepository {
-  async create(userData) {
+  async create(_userData) {
     throw new Error('Method not implemented');
   }
 
@@ -7,19 +7,19 @@ class UserRepository {
     throw new Error('Method not implemented');
   }
 
-  async findById(id) {
+  async findById(_id) {
     throw new Error('Method not implemented');
   }
 
-  async findByEmail(email) {
+  async findByEmail(_email) {
     throw new Error('Method not implemented');
   }
 
-  async update(id, changes) {
+  async update(_id, _changes) {
     throw new Error('Method not implemented');
   }
 
-  async delete(id) {
+  async delete(_id) {
     throw new Error('Method not implemented');
   }
 }

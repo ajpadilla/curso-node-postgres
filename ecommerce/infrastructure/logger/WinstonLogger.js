@@ -10,7 +10,7 @@ class WinstonLogger extends Logger {
         format.timestamp(),
         format.errors({ stack: true }), // Include stack traces
         format.splat(),
-        format.json() // JSON for production
+        format.json(), // JSON for production
       ),
       defaultMeta: { service: 'my-express-app' },
       transports: [
@@ -18,7 +18,7 @@ class WinstonLogger extends Logger {
           format:
             process.env.NODE_ENV === 'production'
               ? format.json()
-              : format.combine(format.colorize(), format.simple())
+              : format.combine(format.colorize(), format.simple()),
         }),
       ],
     });

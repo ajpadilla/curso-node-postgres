@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const Mailer = require("../../../shared/infrastructure/mail/mailer");
+const Mailer = require('../../../shared/infrastructure/mail/mailer');
 
 class NodemailerMailer extends Mailer {
   constructor(config) {

@@ -1,6 +1,3 @@
-
-
-
 const boom = require('@hapi/boom');
 
 const { config } = require('../../../../config/env');
@@ -16,14 +13,12 @@ function checkApiKey(req, res, next) {
 
 function checkAdminRole(req, res, next) {
   const user = req.user;
-  console.log(user);
   if (user.role === 'admin') {
     next();
   } else {
     next(boom.unauthorized());
   }
 }
-
 
 function checkRoles(...roles) {
   return (req, res, next) => {
@@ -33,9 +28,7 @@ function checkRoles(...roles) {
     } else {
       next(boom.unauthorized());
     }
-  }
+  };
 }
 
-
-
-module.exports = { checkApiKey, checkAdminRole, checkRoles }
+module.exports = { checkApiKey, checkAdminRole, checkRoles };

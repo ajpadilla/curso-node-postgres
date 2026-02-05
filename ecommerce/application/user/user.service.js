@@ -1,7 +1,7 @@
-const NotFoundError = require("./errors/notfound.error");
-const ApplicationError = require("../errors/application.error");
-const ConflictError = require("./errors/conflict.error");
-const ValidationError = require("./errors/validation.error");
+const NotFoundError = require('./errors/notfound.error');
+const ApplicationError = require('../errors/application.error');
+const ConflictError = require('./errors/conflict.error');
+const ValidationError = require('./errors/validation.error');
 
 class UserService {
   constructor(userRepository, passwordHasher) {
@@ -30,13 +30,7 @@ class UserService {
   }
 
   async findAll() {
-    const users = await this.userRepository.findAll();
-
-    users.forEach(user => {
-      delete user.dataValues?.password;
-    });
-
-    return users;
+    return await this.userRepository.findAll();
   }
 
   async findOne(id) {
