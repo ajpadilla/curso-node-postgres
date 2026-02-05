@@ -1,6 +1,6 @@
-const UserService = require("../../../../../ecommerce/application/user/user.service");
-const InMemoryUserRepository = require("../../../../toolkit/fakes/in-memory.repository");
-const FakePasswordHasher = require("../../../../toolkit/fakes/fake-password-hasher");
+const UserService = require('../../../../../ecommerce/application/user/user.service');
+const InMemoryUserRepository = require('../../../../toolkit/fakes/in-memory.repository');
+const FakePasswordHasher = require('../../../../toolkit/fakes/fake-password-hasher');
 
 describe('UserService (unit)', () => {
   it('hashes password before saving using a mock', async () => {
@@ -19,8 +19,6 @@ describe('UserService (unit)', () => {
 
     // 2️⃣ Password was hashed before persistence
     const storedUser = await userRepository.findByEmail('test@test.com');
-
-    console.log(storedUser);
 
     expect(storedUser.email).toBe('test@test.com');
   });

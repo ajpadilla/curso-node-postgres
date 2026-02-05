@@ -1,14 +1,8 @@
-const {
-  InMemoryRepository,
-  UserBuilder,
-} = require('../../../../../toolkit');
+const { InMemoryRepository, UserBuilder } = require('../../../../../toolkit');
 
 describe('Get user', () => {
   it('returns all user', async () => {
-    const users = [
-      UserBuilder.aUser().build(),
-      UserBuilder.aUser().build(),
-    ];
+    const users = [UserBuilder.aUser().build(), UserBuilder.aUser().build()];
 
     const repo = new InMemoryRepository({
       collections: { users: users },

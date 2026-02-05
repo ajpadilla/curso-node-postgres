@@ -1,4 +1,4 @@
-const  AuthService =  require("../../../../../ecommerce/application/auth/auth.service");
+const AuthService = require('../../../../../ecommerce/application/auth/auth.service');
 
 it('authenticates a user with valid credentials', async () => {
   const userRepository = {
