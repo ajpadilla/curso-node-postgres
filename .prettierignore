@@ -1,0 +1,21 @@
+# Node
+node_modules
+dist
+build
+
+# Docker / DB volumes
+postgres_data
+pgdata
+data
+docker-data
+
+# Logs
+logs
+*.log
+
+# Coverage
+coverage
+
+# Playwright
+playwright-report
+test-results
