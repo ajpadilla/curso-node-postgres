@@ -1,9 +1,9 @@
 class PasswordHasher {
-  async hash(plain) {
+  async hash(_plain) {
     throw new Error('Not implemented');
   }
 
-  async compare(plain, hashed) {
+  async compare(_plain, _hashed) {
     throw new Error('Not implemented');
   }
 }

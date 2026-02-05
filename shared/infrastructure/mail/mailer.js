@@ -1,5 +1,5 @@
 class Mailer {
-  async send({ to, subject, html }) {
+  async send({ _to, _subject, _html }) {
     throw new Error('Not implemented');
   }
 }
