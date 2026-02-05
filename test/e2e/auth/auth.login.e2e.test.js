@@ -1,9 +1,8 @@
 const request = require('supertest');
 
 const buildApp = require('../../../app');
-const {User} = require("../../../database/models/user.model");
-const {sequelize} = require("../../../database/sequelize");
-
+const { User } = require('../../../database/models/user.model');
+const { sequelize } = require('../../../database/sequelize');
 
 describe('Auth E2E - Login', () => {
   let app;
