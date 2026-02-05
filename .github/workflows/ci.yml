@@ -9,7 +9,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Database for CI
     services:
       postgres:
         image: postgres:13
@@ -25,7 +24,6 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    # Environment variables for Node app
     env:
       NODE_ENV: test
       DB_HOST: localhost
@@ -35,39 +33,48 @@ jobs:
       DB_NAME: my_store_test
 
     steps:
-      # Get repo code
+      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Install Node
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
-      # Install deps
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Lint
+      # 4️⃣ Lint code
       - name: Run ESLint
         run: npm run lint
 
-      # Prepare database
+      # 5️⃣ Create test database
+      - name: Create test database
+        run: |
+          psql -h localhost -U nico -c "CREATE DATABASE my_store_test;"
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }} # fallback if you want
+
+      # 6️⃣ Run migrations
       - name: Run migrations
         run: npm run db:migrate
 
+      # 7️⃣ Run seeds
       - name: Run seeds
         run: npm run db:seed:run
 
-      # Run API tests
+      # 8️⃣ Run API tests
       - name: Run API tests
         run: npm run test:api
 
-      # Run UI tests (Playwright)
+      # 9️⃣ Install Playwright browsers
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # 🔟 Run UI tests
       - name: Run UI tests
         run: npm run test:ui
