@@ -1,4 +1,4 @@
-const PasswordHasher = require("../../../shared/infrastructure/security/password.hasher");
+const PasswordHasher = require('../../../shared/infrastructure/security/password.hasher');
 
 class FakePasswordHasher extends PasswordHasher {
   async hash(plain) {
@@ -10,4 +10,4 @@ class FakePasswordHasher extends PasswordHasher {
   }
 }
 
-module.exports = FakePasswordHasher
+module.exports = FakePasswordHasher;

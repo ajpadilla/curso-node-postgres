@@ -1,10 +1,8 @@
 const { faker } = require('@faker-js/faker');
 
-
 class UserBuilder {
-
   constructor() {
-    this.user  = {
+    this.user = {
       email: faker.internet.email(),
       password: faker.internet.password(),
     };
@@ -27,7 +25,6 @@ class UserBuilder {
   static aUser() {
     return new UserBuilder();
   }
-
 }
 
 module.exports = UserBuilder;
