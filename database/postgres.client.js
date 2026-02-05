@@ -3,11 +3,11 @@ const { config } = require('../config/env');
 
 const getConnection = async () => {
   const client = new Client({
-    host: config.dbHost,
-    port: config.dbPort,
-    user: config.dbUser,
-    password: config.dbPassword,
-    database: config.dbName
+    host: config.db.host,
+    port: config.db.port,
+    user: config.db.user,
+    password: config.db.password,
+    database: config.db.name,
   });
 
   await client.connect();

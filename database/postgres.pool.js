@@ -1,9 +1,9 @@
 const { Pool } = require('pg');
 const { config } = require('../config/env');
 
-const USER = encodeURIComponent(config.dbUser);
-const PASSWORD = encodeURIComponent(config.dbPassword);
-const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+const USER = encodeURIComponent(config.db.user);
+const PASSWORD = encodeURIComponent(config.db.password);
+const URI = `postgres://${USER}:${PASSWORD}@${config.db.host}:${config.db.port}/${config.db.name}`;
 
 const pool = new Pool({ connectionString: URI });
 

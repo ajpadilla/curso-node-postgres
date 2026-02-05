@@ -3,5 +3,5 @@ const { getConnection } = require('./postgres.client');
 
 module.exports = {
   pool,
-  getConnection
+  getConnection,
 };
