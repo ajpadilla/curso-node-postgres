@@ -1,12 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const routerApi = require('./ecommerce/bootstrap/container');
-const {checkApiKey} = require('./ecommerce/infrastructure/http/middlewares/auth.middleware');
+const { checkApiKey } = require('./ecommerce/infrastructure/http/middlewares/auth.middleware');
 
-const { logErrors, errorHandler, boomErrorHandler, ormErrorHandler } = require('./ecommerce/infrastructure/http/middlewares/error.middleware');
+const {
+  logErrors,
+  errorHandler,
+  boomErrorHandler,
+  ormErrorHandler,
+} = require('./ecommerce/infrastructure/http/middlewares/error.middleware');
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -18,8 +22,8 @@ const options = {
     } else {
       callback(new Error('no permitido'));
     }
-  }
-}
+  },
+};
 app.use(cors(options));
 
 // Agrega el modulo de autorizacion de jwt del proyecto
@@ -29,7 +33,7 @@ app.get('/', (req, res) => {
   res.send('Hola mi server en express');
 });
 
-app.get('/nueva-ruta', checkApiKey,(req, res) => {
+app.get('/nueva-ruta', checkApiKey, (req, res) => {
   res.send('Hola, soy una nueva ruta');
 });
 
@@ -39,7 +43,3 @@ app.use(logErrors);
 app.use(ormErrorHandler);
 app.use(boomErrorHandler);
 app.use(errorHandler);
-
-app.listen(port, () => {
-  console.log('Mi port' +  port);
-});
