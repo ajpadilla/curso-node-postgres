@@ -1,7 +1,19 @@
-<h1>Welcome</h1>
+<div class="container">
 
-<p>Hello <%= user.email %></p>
+    <h1>Dashboard</h1>
 
-<p>Role: <%= user.role %></p>
+    <div class="card">
+        <h3>Welcome</h3>
+        <p>Hello <strong><%= user.email %></strong></p>
+        <p>Role: <%= user.role %></p>
+    </div>
 
-<a href="/api/v1/auth/logout">Logout</a>
+    <div class="card">
+        <h3>Session</h3>
+
+        <a href="/api/v1/auth/logout" class="btn-danger">
+            Logout
+        </a>
+    </div>
+
+</div>

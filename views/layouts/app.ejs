@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><%= title %></title>
+    <title><%= title || 'My App' %></title>
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 
-<aside>
-    <%- sidebar || 'This is the master sidebar' %>
-</aside>
+<% if (typeof sidebar !== 'undefined' && sidebar) { %>
+    <aside>
+        <%- sidebar %>
+    </aside>
+<% } %>
 
 <main class="container">
     <%- body %>
