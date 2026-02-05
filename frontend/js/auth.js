@@ -14,31 +14,31 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function login(email, password) {
+  const errorDiv = document.getElementById('loginError');
+  errorDiv.style.display = 'none';
+  errorDiv.textContent = '';
+
   try {
     const response = await fetch('/api/v1/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include', // IMPORTANT (cookies)
-      body: JSON.stringify({ email, password })
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      alert(data.message || 'Login failed');
+      // Show error in the page
+      errorDiv.textContent = data.message || 'Login failed';
+      errorDiv.style.display = 'block';
       return;
     }
 
-    // Save token (if using JWT)
-    //localStorage.setItem('token', data.token);
-
-    // Redirect
-    window.location.href = '/api/v1/auth/dashboard';
-
+    // Success → redirect
+    window.location.href = '/api/v1/dashboard';
   } catch (err) {
-    console.error(err);
-    alert('Server error');
+    errorDiv.textContent = 'Server error. Try again later.';
+    errorDiv.style.display = 'block';
   }
 }
