@@ -3,7 +3,7 @@ const UserService = require('../../../../../ecommerce/application/user/user.serv
 const { sequelize } = require('../../../../../database/sequelize'); // adjust path
 
 const { User } = require('../../../../../database/models/user.model');
-const BcryptPasswordHasher = require("../../../../../ecommerce/infrastructure/security/bcrypt.password-hasher"); // your User model
+const BcryptPasswordHasher = require('../../../../../ecommerce/infrastructure/security/bcrypt.password-hasher'); // your User model
 
 beforeEach(async () => {
   // truncate the user table before each test
@@ -22,7 +22,7 @@ it('creates user in database', async () => {
 
   const user = await userService.create({
     email: 'test@test.com',
-    password: '123'
+    password: '123',
   });
 
   expect(user.id).toBeDefined();
