@@ -27,7 +27,7 @@ jobs:
 
     env:
       NODE_ENV: test
-      DB_HOST: localhost       # changed from 'postgres'
+      DB_HOST: postgres         # Use service name, not localhost
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
@@ -72,12 +72,13 @@ jobs:
       # ------------------------------
       - name: Wait for Postgres
         run: |
+          echo "Waiting for Postgres to be ready..."
           for i in {1..30}; do
             if PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d postgres -c '\q'; then
-              echo "Postgres is ready"
+              echo "Postgres is ready!"
               break
             fi
-            echo "Waiting for Postgres..."
+            echo "Postgres not ready yet... retrying ($i/30)"
             sleep 2
           done
 
