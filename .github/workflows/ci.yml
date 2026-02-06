@@ -15,7 +15,7 @@ jobs:
         env:
           POSTGRES_USER: nico
           POSTGRES_PASSWORD: admin123
-          POSTGRES_DB: my_store_test
+          POSTGRES_DB: postgres   # Start with default DB
         options: >-
           --health-cmd="pg_isready -U $POSTGRES_USER"
           --health-interval=5s
@@ -24,7 +24,7 @@ jobs:
 
     env:
       NODE_ENV: test
-      DB_HOST: postgres      # GitHub Actions service hostname
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
@@ -50,47 +50,44 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      # 5️⃣ Install Postgres client
-      - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
-
-      # 6️⃣ Wait for Postgres and create database
-      - name: Wait for Postgres and create database
+      # 5️⃣ Wait for Postgres to be ready
+      - name: Wait for Postgres and create test database
         run: |
           echo "Waiting for Postgres to be ready..."
           for i in {1..30}; do
-            pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER
+            docker exec $(docker ps -q -f ancestor=postgres:13) pg_isready -U $DB_USER
             if [ $? -eq 0 ]; then
               echo "Postgres is ready!"
               break
             fi
-            echo "Waiting for Postgres..."
+            echo "Waiting..."
             sleep 2
           done
 
-          echo "Creating test database (if not exists)..."
-          PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -p $DB_PORT -v ON_ERROR_STOP=1 -c "DO \$\$ BEGIN
-            IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '$DB_NAME') THEN
-              CREATE DATABASE $DB_NAME;
-            END IF;
-          END \$\$;"
+          echo "Creating test database if it doesn't exist..."
+          docker exec $(docker ps -q -f ancestor=postgres:13) \
+            psql -U $DB_USER -d postgres -c "DO \$\$ BEGIN
+              IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '$DB_NAME') THEN
+                CREATE DATABASE $DB_NAME;
+              END IF;
+            END \$\$;"
 
-      # 7️⃣ Run migrations
+      # 6️⃣ Run migrations
       - name: Run migrations
         run: npm run db:migrate
 
-      # 8️⃣ Run seeds
+      # 7️⃣ Run seeds
       - name: Run seeds
         run: npm run db:seed:run
 
-      # 9️⃣ Run API tests
+      # 8️⃣ Run API tests
       - name: Run API tests
         run: npm run test:api
 
-      # 🔟 Install Playwright browsers
+      # 9️⃣ Install Playwright browsers
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # 1️⃣1️⃣ Run UI tests
+      # 🔟 Run UI tests
       - name: Run UI tests
         run: npm run test:ui
