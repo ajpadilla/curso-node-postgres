@@ -20,14 +20,14 @@ jobs:
           POSTGRES_PASSWORD: admin123
           POSTGRES_DB: postgres
         options: >-
-          --health-cmd="pg_isready -U $POSTGRES_USER"
+          --health-cmd="pg_isready -U nico -d postgres"
           --health-interval=5s
           --health-timeout=5s
-          --health-retries=10
+          --health-retries=20
 
     env:
       NODE_ENV: test
-      DB_HOST: postgres         # Use service name, not localhost
+      DB_HOST: postgres        # Use service name
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
@@ -74,7 +74,7 @@ jobs:
         run: |
           echo "Waiting for Postgres to be ready..."
           for i in {1..30}; do
-            if PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d postgres -c '\q'; then
+            if PGPASSWORD=admin123 psql -h postgres -U nico -d postgres -c '\q'; then
               echo "Postgres is ready!"
               break
             fi
@@ -88,12 +88,12 @@ jobs:
       - name: Create test database
         run: |
           echo "Checking if test database exists..."
-          DB_EXISTS=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")
+          DB_EXISTS=$(PGPASSWORD=admin123 psql -h postgres -U nico -tAc "SELECT 1 FROM pg_database WHERE datname='my_store_test'")
           if [ "$DB_EXISTS" != "1" ]; then
-            echo "Database $DB_NAME does not exist. Creating..."
-            PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -c "CREATE DATABASE $DB_NAME;"
+            echo "Database my_store_test does not exist. Creating..."
+            PGPASSWORD=admin123 psql -h postgres -U nico -c "CREATE DATABASE my_store_test;"
           else
-            echo "Database $DB_NAME already exists."
+            echo "Database my_store_test already exists."
           fi
 
       # ------------------------------
