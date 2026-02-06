@@ -9,7 +9,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # 1️⃣ Start Postgres service
     services:
       postgres:
         image: postgres:13
@@ -25,56 +24,62 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    # 2️⃣ Environment variables available to all steps
     env:
       NODE_ENV: test
-      DB_HOST: postgres       # <-- connects to Postgres service
+      DB_HOST: postgres      # <-- connect to Postgres service
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
       DB_NAME: my_store_test
 
     steps:
-      # 3️⃣ Checkout the repo
+      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 4️⃣ Setup Node.js
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
-      # 5️⃣ Install dependencies
+      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 6️⃣ Lint code
+      # 4️⃣ Lint code
       - name: Run ESLint
         run: npm run lint
 
-      # 7️⃣ Create test database
-      - name: Create test database
+      # 5️⃣ Wait for Postgres and create database
+      - name: Wait for Postgres and create database
         run: |
+          echo "Waiting for Postgres to be ready..."
+          for i in {1..15}; do
+            pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER && break
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+          echo "Creating test database..."
           PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -p $DB_PORT -c "CREATE DATABASE $DB_NAME;"
 
-      # 8️⃣ Run migrations
+      # 6️⃣ Run migrations
       - name: Run migrations
         run: npm run db:migrate
 
-      # 9️⃣ Run seeds
+      # 7️⃣ Run seeds
       - name: Run seeds
         run: npm run db:seed:run
 
-      # 🔟 Run API tests
+      # 8️⃣ Run API tests
       - name: Run API tests
         run: npm run test:api
 
-      # 1️⃣1️⃣ Install Playwright browsers
+      # 9️⃣ Install Playwright browsers
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # 1️⃣2️⃣ Run UI tests
+      # 🔟 Run UI tests
       - name: Run UI tests
         run: npm run test:ui
