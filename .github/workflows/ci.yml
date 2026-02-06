@@ -18,7 +18,7 @@ jobs:
         env:
           POSTGRES_USER: nico
           POSTGRES_PASSWORD: admin123
-          POSTGRES_DB: postgres   # default DB to connect
+          POSTGRES_DB: postgres
         options: >-
           --health-cmd="pg_isready -U $POSTGRES_USER"
           --health-interval=5s
@@ -27,7 +27,7 @@ jobs:
 
     env:
       NODE_ENV: test
-      DB_HOST: postgres
+      DB_HOST: localhost       # changed from 'postgres'
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
@@ -68,16 +68,23 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       # ------------------------------
-      # 6️⃣ Wait for Postgres and create test database
+      # 6️⃣ Wait for Postgres to be ready
       # ------------------------------
       - name: Wait for Postgres
-        uses: jakejarvis/wait-action@master
-        with:
-          timeout: 60
-          check-command: |
-            PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d postgres -c '\q'
+        run: |
+          for i in {1..30}; do
+            if PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d postgres -c '\q'; then
+              echo "Postgres is ready"
+              break
+            fi
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
 
-      - name: Create test database if not exists
+      # ------------------------------
+      # 7️⃣ Create test database if not exists
+      # ------------------------------
+      - name: Create test database
         run: |
           echo "Checking if test database exists..."
           DB_EXISTS=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")
@@ -89,31 +96,31 @@ jobs:
           fi
 
       # ------------------------------
-      # 7️⃣ Run migrations
+      # 8️⃣ Run migrations
       # ------------------------------
       - name: Run migrations
         run: npm run db:migrate
 
       # ------------------------------
-      # 8️⃣ Run seeds
+      # 9️⃣ Run seeds
       # ------------------------------
       - name: Run seeds
         run: npm run db:seed:run
 
       # ------------------------------
-      # 9️⃣ Run API tests
+      # 🔟 Run API tests
       # ------------------------------
       - name: Run API tests
         run: npm run test:api
 
       # ------------------------------
-      # 🔟 Install Playwright browsers
+      # 1️⃣1️⃣ Install Playwright browsers
       # ------------------------------
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
       # ------------------------------
-      # 1️⃣1️⃣ Run UI tests
+      # 1️⃣2️⃣ Run UI tests
       # ------------------------------
       - name: Run UI tests
         run: npm run test:ui
