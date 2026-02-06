@@ -16,8 +16,6 @@ jobs:
           POSTGRES_USER: nico
           POSTGRES_PASSWORD: admin123
           POSTGRES_DB: my_store_test
-        ports:
-          - 5432:5432
         options: >-
           --health-cmd="pg_isready"
           --health-interval=10s
@@ -26,7 +24,7 @@ jobs:
 
     env:
       NODE_ENV: test
-      DB_HOST: postgres      # <-- connect to Postgres service
+      DB_HOST: postgres      # Service hostname
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
@@ -52,34 +50,38 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      # 5️⃣ Wait for Postgres and create database
+      # 5️⃣ Install Postgres client
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # 6️⃣ Wait for Postgres and create database
       - name: Wait for Postgres and create database
         run: |
           echo "Waiting for Postgres to be ready..."
-          for i in {1..15}; do
-            pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER && break
+          until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
             echo "Waiting for Postgres..."
             sleep 2
           done
+
           echo "Creating test database..."
           PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -p $DB_PORT -c "CREATE DATABASE $DB_NAME;"
 
-      # 6️⃣ Run migrations
+      # 7️⃣ Run migrations
       - name: Run migrations
         run: npm run db:migrate
 
-      # 7️⃣ Run seeds
+      # 8️⃣ Run seeds
       - name: Run seeds
         run: npm run db:seed:run
 
-      # 8️⃣ Run API tests
+      # 9️⃣ Run API tests
       - name: Run API tests
         run: npm run test:api
 
-      # 9️⃣ Install Playwright browsers
+      # 🔟 Install Playwright browsers
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # 🔟 Run UI tests
+      # 1️⃣1️⃣ Run UI tests
       - name: Run UI tests
         run: npm run test:ui
