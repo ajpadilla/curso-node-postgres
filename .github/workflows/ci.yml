@@ -9,13 +9,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    # ------------------------------
+    # Postgres service
+    # ------------------------------
     services:
       postgres:
         image: postgres:13
         env:
           POSTGRES_USER: nico
           POSTGRES_PASSWORD: admin123
-          POSTGRES_DB: postgres   # Start with default DB
+          POSTGRES_DB: postgres   # default DB for connection
         options: >-
           --health-cmd="pg_isready -U $POSTGRES_USER"
           --health-interval=5s
@@ -24,37 +27,49 @@ jobs:
 
     env:
       NODE_ENV: test
-      DB_HOST: postgres
+      DB_HOST: postgres      # service hostname
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
       DB_NAME: my_store_test
 
     steps:
-      # 1️⃣ Checkout repository
+      # ------------------------------
+      # 1️⃣ Checkout code
+      # ------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ------------------------------
       # 2️⃣ Setup Node.js
+      # ------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
+      # ------------------------------
       # 3️⃣ Install dependencies
+      # ------------------------------
       - name: Install dependencies
         run: npm ci
 
+      # ------------------------------
       # 4️⃣ Lint code
+      # ------------------------------
       - name: Run ESLint
         run: npm run lint
 
-      # 5️⃣ Install Postgres client
+      # ------------------------------
+      # 5️⃣ Install PostgreSQL client
+      # ------------------------------
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
+      # ------------------------------
       # 6️⃣ Wait for Postgres and create test database
+      # ------------------------------
       - name: Wait for Postgres and create test database
         run: |
           echo "Waiting for Postgres to be ready..."
@@ -77,22 +92,32 @@ jobs:
             echo "Database $DB_NAME already exists."
           fi
 
+      # ------------------------------
       # 7️⃣ Run migrations
+      # ------------------------------
       - name: Run migrations
         run: npm run db:migrate
 
+      # ------------------------------
       # 8️⃣ Run seeds
+      # ------------------------------
       - name: Run seeds
         run: npm run db:seed:run
 
+      # ------------------------------
       # 9️⃣ Run API tests
+      # ------------------------------
       - name: Run API tests
         run: npm run test:api
 
+      # ------------------------------
       # 🔟 Install Playwright browsers
+      # ------------------------------
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # ------------------------------
       # 1️⃣1️⃣ Run UI tests
+      # ------------------------------
       - name: Run UI tests
         run: npm run test:ui
