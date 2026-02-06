@@ -71,7 +71,7 @@ jobs:
       # 6️⃣ Wait for Postgres and create test database
       # ------------------------------
       - name: Wait for Postgres
-        uses: jakejarvis/wait-action@v0.1.3
+        uses: jakejarvis/wait-action@master
         with:
           timeout: 60
           check-command: |
