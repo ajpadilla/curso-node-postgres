@@ -31,7 +31,7 @@ jobs:
       DB_NAME: my_store_test
 
     steps:
-      # 1️⃣ Checkout code
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -50,12 +50,16 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      # 5️⃣ Wait for Postgres to be ready
+      # 5️⃣ Install Postgres client
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # 6️⃣ Wait for Postgres and create test database
       - name: Wait for Postgres and create test database
         run: |
           echo "Waiting for Postgres to be ready..."
           for i in {1..30}; do
-            docker exec $(docker ps -q -f ancestor=postgres:13) pg_isready -U $DB_USER
+            pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER
             if [ $? -eq 0 ]; then
               echo "Postgres is ready!"
               break
@@ -64,30 +68,31 @@ jobs:
             sleep 2
           done
 
-          echo "Creating test database if it doesn't exist..."
-          docker exec $(docker ps -q -f ancestor=postgres:13) \
-            psql -U $DB_USER -d postgres -c "DO \$\$ BEGIN
-              IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '$DB_NAME') THEN
-                CREATE DATABASE $DB_NAME;
-              END IF;
-            END \$\$;"
+          echo "Checking if test database exists..."
+          DB_EXISTS=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'")
+          if [ "$DB_EXISTS" != "1" ]; then
+            echo "Database $DB_NAME does not exist. Creating..."
+            PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -c "CREATE DATABASE $DB_NAME;"
+          else
+            echo "Database $DB_NAME already exists."
+          fi
 
-      # 6️⃣ Run migrations
+      # 7️⃣ Run migrations
       - name: Run migrations
         run: npm run db:migrate
 
-      # 7️⃣ Run seeds
+      # 8️⃣ Run seeds
       - name: Run seeds
         run: npm run db:seed:run
 
-      # 8️⃣ Run API tests
+      # 9️⃣ Run API tests
       - name: Run API tests
         run: npm run test:api
 
-      # 9️⃣ Install Playwright browsers
+      # 🔟 Install Playwright browsers
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # 🔟 Run UI tests
+      # 1️⃣1️⃣ Run UI tests
       - name: Run UI tests
         run: npm run test:ui
