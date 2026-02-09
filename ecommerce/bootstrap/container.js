@@ -14,6 +14,11 @@ const authSessionMiddleware = require('../infrastructure/http/middlewares/auth-s
 const ViewRouter = require('../infrastructure/http/routes/view/view.router');
 const WinstonLogger = require('../infrastructure/logger/WinstonLogger');
 const createErrorHandlers = require('../infrastructure/http/middlewares/error.middleware');
+const createHttpLoggerHandler = require('../infrastructure/http/middlewares/observability/httpLogger.middleware');
+const createRequestIdMiddleware = require('../infrastructure/http/middlewares/observability/requestId.middleware');
+const UuidRequestIdGenerator = require("../../shared/infrastructure/request-id/uuid-request-id.generator");
+const PrometheusMetrics = require("../infrastructure/metrics/prometheus.metrics");
+const createMetricsMiddleware = require("../infrastructure/http/middlewares/observability/metrics.middleware");
 
 const userRepository = new SequelizeUserRepository();
 const bcryptPasswordHasher = new BcryptPasswordHasher();
@@ -61,6 +66,15 @@ const viewRouter = new ViewRouter({
 const logger = new WinstonLogger();
 
 const errorHandlers = createErrorHandlers(logger);
+const httpLogger = createHttpLoggerHandler(logger);
+
+const requestIdGenerator = new UuidRequestIdGenerator();
+const requestId = createRequestIdMiddleware(requestIdGenerator);
+
+
+const metrics = new PrometheusMetrics();
+
+const metricsMiddleware = createMetricsMiddleware({ metrics });
 
 function routerApi(app) {
   const router = express.Router();
@@ -75,4 +89,7 @@ function routerApi(app) {
 module.exports = {
   routerApi,
   errorHandlers,
+  requestId,
+  httpLogger,
+  metricsMiddleware
 };
