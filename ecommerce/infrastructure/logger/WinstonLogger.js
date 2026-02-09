@@ -1,4 +1,4 @@
-const Logger = require('../../../shared/logger/Logger');
+const Logger = require('../../../shared/infrastructure/logger');
 const { createLogger, format, transports } = require('winston');
 
 class WinstonLogger extends Logger {
@@ -24,20 +24,20 @@ class WinstonLogger extends Logger {
     });
   }
 
-  info(msg, meta) {
-    this.logger.info(msg, meta);
+  info(message, meta = {}) {
+    this.logger.info(message, meta);
   }
 
-  warn(msg, meta) {
-    this.logger.warn(msg, meta);
+  warn(message, meta = {}) {
+    this.logger.warn(message, meta);
   }
 
-  error(msg, meta) {
-    this.logger.error(msg, meta);
+  error(message, meta = {}) {
+    this.logger.error(message, meta);
   }
 
-  debug(msg, meta) {
-    this.logger.debug(msg, meta);
+  debug(message, meta = {}) {
+    this.logger.debug(message, meta);
   }
 }
 
