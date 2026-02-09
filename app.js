@@ -1,13 +1,23 @@
 // src/app.js
 const express = require('express');
 const cors = require('cors');
-const { routerApi, errorHandlers } = require('./ecommerce/bootstrap/container');
+const {
+  routerApi,
+  errorHandlers,
+  requestId,
+  httpLogger,
+  metricsMiddleware
+}
+  = require('./ecommerce/bootstrap/container');
 const { join } = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
 
 const { logErrors, ormErrorHandler, boomErrorHandler, genericErrorHandler, notFoundHandler } =
   errorHandlers;
+
+const { requestIdMiddleware } = requestId;
+const { httpLoggerHandler } = httpLogger;
 
 function buildApp() {
   const app = express();
@@ -43,6 +53,9 @@ function buildApp() {
   routerApi(app);
 
   app.use(logErrors);
+  app.use(requestIdMiddleware);
+  app.use(metricsMiddleware);
+  app.use(httpLoggerHandler);
   app.use(ormErrorHandler);
   app.use(boomErrorHandler);
   app.use(genericErrorHandler);
