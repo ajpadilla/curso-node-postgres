@@ -9,25 +9,24 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # ------------------------------
-    # Postgres service
-    # ------------------------------
     services:
       postgres:
         image: postgres:13
+        ports:
+          - 5432:5432
         env:
+          POSTGRES_DB: my_store_test
           POSTGRES_USER: nico
           POSTGRES_PASSWORD: admin123
-          POSTGRES_DB: postgres
         options: >-
-          --health-cmd="pg_isready -U nico -d postgres"
+          --health-cmd="pg_isready -U nico -d my_store_test"
           --health-interval=5s
           --health-timeout=5s
-          --health-retries=20
+          --health-retries=30
 
     env:
       NODE_ENV: test
-      DB_HOST: postgres        # Use service name
+      DB_HOST: localhost
       DB_PORT: 5432
       DB_USER: nico
       DB_PASSWORD: admin123
@@ -35,13 +34,13 @@ jobs:
 
     steps:
       # ------------------------------
-      # 1️⃣ Checkout code
+      # 1️⃣ Checkout
       # ------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # ------------------------------
-      # 2️⃣ Setup Node.js
+      # 2️⃣ Node.js
       # ------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -50,78 +49,74 @@ jobs:
           cache: npm
 
       # ------------------------------
-      # 3️⃣ Install dependencies
+      # 3️⃣ Dependencies
       # ------------------------------
       - name: Install dependencies
         run: npm ci
 
       # ------------------------------
-      # 4️⃣ Lint code
+      # 4️⃣ Lint
       # ------------------------------
       - name: Run ESLint
         run: npm run lint
 
       # ------------------------------
-      # 5️⃣ Install PostgreSQL client
+      # 5️⃣ Install Postgres client
       # ------------------------------
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       # ------------------------------
-      # 6️⃣ Wait for Postgres to be ready
+      # 6️⃣ Wait for Postgres (robust)
       # ------------------------------
       - name: Wait for Postgres
         run: |
           echo "Waiting for Postgres to be ready..."
-          for i in {1..30}; do
-            if PGPASSWORD=admin123 psql -h postgres -U nico -d postgres -c '\q'; then
-              echo "Postgres is ready!"
-              break
-            fi
-            echo "Postgres not ready yet... retrying ($i/30)"
+          until pg_isready -h localhost -U nico -d my_store_test; do
             sleep 2
           done
+          echo "Postgres is ready"
 
       # ------------------------------
-      # 7️⃣ Create test database if not exists
+      # 7️⃣ Debug DB (VERY useful)
       # ------------------------------
-      - name: Create test database
+      - name: Debug Postgres
         run: |
-          echo "Checking if test database exists..."
-          DB_EXISTS=$(PGPASSWORD=admin123 psql -h postgres -U nico -tAc "SELECT 1 FROM pg_database WHERE datname='my_store_test'")
-          if [ "$DB_EXISTS" != "1" ]; then
-            echo "Database my_store_test does not exist. Creating..."
-            PGPASSWORD=admin123 psql -h postgres -U nico -c "CREATE DATABASE my_store_test;"
-          else
-            echo "Database my_store_test already exists."
-          fi
+          PGPASSWORD=admin123 psql -h localhost -U nico -d my_store_test -c '\l'
+          PGPASSWORD=admin123 psql -h localhost -U nico -d my_store_test -c '\dt'
 
       # ------------------------------
-      # 8️⃣ Run migrations
+      # 8️⃣ Migrations
       # ------------------------------
       - name: Run migrations
         run: npm run db:migrate
 
       # ------------------------------
-      # 9️⃣ Run seeds
+      # 9️⃣ Seeds
       # ------------------------------
       - name: Run seeds
         run: npm run db:seed:run
 
       # ------------------------------
-      # 🔟 Run API tests
+      # 🔟 API tests
+      # ------------------------------
+      - name: Run API tests
+        run: npm run test
+
+      # ------------------------------
+      # 🔟 API tests
       # ------------------------------
       - name: Run API tests
         run: npm run test:api
 
       # ------------------------------
-      # 1️⃣1️⃣ Install Playwright browsers
+      # 1️⃣1️⃣ Playwright
       # ------------------------------
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
       # ------------------------------
-      # 1️⃣2️⃣ Run UI tests
+      # 1️⃣2️⃣ UI tests
       # ------------------------------
       - name: Run UI tests
         run: npm run test:ui
