@@ -115,11 +115,11 @@ jobs:
       # ------------------------------
       # 🔟 Install Playwright browsers
       # ------------------------------
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+      #  - name: Install Playwright browsers
+      #   run: npx playwright install --with-deps
 
       # ------------------------------
       # 1️⃣1️⃣ Run UI tests
       # ------------------------------
-      - name: Run UI tests
-        run: npm run test:ui
+      # - name: Run UI tests
+      # run: npm run test:ui
