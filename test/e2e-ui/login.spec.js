@@ -14,7 +14,7 @@ test.describe('Login Page', () => {
     await page.click('button[type="submit"]');
 
     // 4️⃣ Wait for redirect
-    await page.waitForURL('**/api/v1/dashboard');
+    await page.waitForURL('http://localhost:3000/api/v1/dashboard');
 
     // 5️⃣ Verify dashboard content
     await expect(page).toHaveURL(/dashboard/);
