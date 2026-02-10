@@ -31,6 +31,7 @@ jobs:
       DB_USER: nico
       DB_PASSWORD: admin123
       DB_NAME: my_store_test
+      JWT_SECRET: hj1Wc7HDrQOILqkAg68yuZEawzeNMsRF
 
     steps:
       # ------------------------------
