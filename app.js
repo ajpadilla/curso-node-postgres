@@ -16,9 +16,6 @@ const cookieParser = require('cookie-parser');
 const { logErrors, ormErrorHandler, boomErrorHandler, genericErrorHandler, notFoundHandler } =
   errorHandlers;
 
-const { requestIdMiddleware } = requestId;
-const { httpLoggerHandler } = httpLogger;
-
 function buildApp() {
   const app = express();
 
@@ -53,9 +50,9 @@ function buildApp() {
   routerApi(app);
 
   app.use(logErrors);
-  app.use(requestIdMiddleware);
-  app.use(metricsMiddleware);
-  app.use(httpLoggerHandler);
+  app.use(requestId.requestId);
+  app.use(metricsMiddleware.metricsMiddleware);
+  app.use(httpLogger.httpLogger);
   app.use(ormErrorHandler);
   app.use(boomErrorHandler);
   app.use(genericErrorHandler);
