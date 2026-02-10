@@ -32,6 +32,7 @@ jobs:
       DB_PASSWORD: admin123
       DB_NAME: my_store_test
       JWT_SECRET: hj1Wc7HDrQOILqkAg68yuZEawzeNMsRF
+      PORT: 3000
 
     steps:
       # ------------------------------
@@ -41,7 +42,7 @@ jobs:
         uses: actions/checkout@v4
 
       # ------------------------------
-      # 2️⃣ Node.js
+      # 2️⃣ Setup Node.js
       # ------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -49,38 +50,14 @@ jobs:
           node-version: 18
           cache: npm
 
-      # 11️⃣ Start your app
-      - name: Start Node.js app
-        run: |
-          # Install dependencies
-          npm ci
-          # Start server in background
-          nohup npm start &
-
-      # Wait for server to be ready
-      - name: Wait for app
-        run: |
-          echo "Waiting for app to be ready..."
-          n=0
-          until curl -s http://localhost:3000/api/v1/login || [ $n -eq 30 ]; do
-            n=$((n+1))
-            sleep 2
-          done
+      # ------------------------------
+      # 3️⃣ Install dependencies
+      # ------------------------------
+      - name: Install dependencies
+        run: npm ci
 
       # ------------------------------
-      # 4️⃣ Lint
-      # ------------------------------
-      - name: Run ESLint
-        run: npm run lint
-
-      # ------------------------------
-      # 5️⃣ Install Postgres client
-      # ------------------------------
-      - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
-
-      # ------------------------------
-      # 6️⃣ Wait for Postgres (robust)
+      # 4️⃣ Wait for Postgres
       # ------------------------------
       - name: Wait for Postgres
         run: |
@@ -91,45 +68,58 @@ jobs:
           echo "Postgres is ready"
 
       # ------------------------------
-      # 7️⃣ Debug DB (VERY useful)
-      # ------------------------------
-      - name: Debug Postgres
-        run: |
-          PGPASSWORD=admin123 psql -h localhost -U nico -d my_store_test -c '\l'
-          PGPASSWORD=admin123 psql -h localhost -U nico -d my_store_test -c '\dt'
-
-      # ------------------------------
-      # 8️⃣ Migrations
+      # 5️⃣ Run migrations
       # ------------------------------
       - name: Run migrations
         run: npm run db:migrate
 
       # ------------------------------
-      # 9️⃣ Seeds
+      # 6️⃣ Run seeds
       # ------------------------------
       - name: Run seeds
         run: npm run db:seed:run
 
       # ------------------------------
-      # 🔟 API tests
+      # 7️⃣ Start server
       # ------------------------------
-      - name: Run API tests
+      - name: Start Node.js app
+        run: |
+          echo "Starting server in background..."
+          nohup npm start &
+          echo "Waiting for server to be ready..."
+          n=0
+          until curl --silent --fail http://localhost:3000/api/v1/login || [ $n -eq 30 ]; do
+            n=$((n+1))
+            sleep 2
+          done
+          echo "Server is ready"
+
+      # ------------------------------
+      # 8️⃣ Run ESLint
+      # ------------------------------
+      - name: Run ESLint
+        run: npm run lint
+
+      # ------------------------------
+      # 9️⃣ Run UNIT tests
+      # ------------------------------
+      - name: Run UNIT tests
         run: npm run test
 
       # ------------------------------
-      # 🔟 API tests
+      # 9️⃣ Run API tests
       # ------------------------------
       - name: Run API tests
         run: npm run test:api
 
       # ------------------------------
-      # 1️⃣1️⃣ Playwright
+      # 🔟 Install Playwright browsers
       # ------------------------------
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
       # ------------------------------
-      # 1️⃣2️⃣ UI tests
+      # 1️⃣1️⃣ Run UI tests
       # ------------------------------
       - name: Run UI tests
         run: npm run test:ui
