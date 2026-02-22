@@ -1,11 +1,14 @@
 const express = require('express');
 
+const passport = require('passport');
+const client = require('prom-client');
+
 const createUserRouter = require('../infrastructure/http/routes/user/users.router');
 const UserService = require('../application/user/user.service');
 const SequelizeUserRepository = require('../infrastructure/persistence/sequelize/sequelize-user.repository');
 const BcryptPasswordHasher = require('../infrastructure/security/bcrypt.password-hasher');
 const AuthService = require('../application/auth/auth.service');
-const passport = require('passport');
+
 const JwtTokenService = require('../infrastructure/security/jwt.token.service');
 const NodemailerMailer = require('../infrastructure/mail/node.mailer.mailer');
 const configurePassport = require('../infrastructure/auth/passport/passport.factory');
@@ -19,6 +22,11 @@ const createRequestIdMiddleware = require('../infrastructure/http/middlewares/ob
 const UuidRequestIdGenerator = require("../../shared/infrastructure/request-id/uuid-request-id.generator");
 const PrometheusMetrics = require("../infrastructure/metrics/prometheus.metrics");
 const createMetricsMiddleware = require("../infrastructure/http/middlewares/observability/metrics.middleware");
+const MetricsRouter = require("../infrastructure/http/routes/metrics/metrics.router");
+const {sequelize} = require("../../database/sequelize");
+const DatabaseHealthIndicator = require("../../shared/application/health/db.health-indicator");
+const HealthService = require("../../shared/application/health/health.service");
+const HealthRouter = require("../infrastructure/http/routes/health/health.router");
 
 const userRepository = new SequelizeUserRepository();
 const bcryptPasswordHasher = new BcryptPasswordHasher();
@@ -69,12 +77,27 @@ const errorHandlers = createErrorHandlers(logger);
 const httpLogger = createHttpLoggerHandler(logger);
 
 const requestIdGenerator = new UuidRequestIdGenerator();
-const requestId = createRequestIdMiddleware(requestIdGenerator);
+const requestId = createRequestIdMiddleware({ requestIdGenerator });
 
 
 const metrics = new PrometheusMetrics();
 
 const metricsMiddleware = createMetricsMiddleware({ metrics });
+
+const metricsRouter = new MetricsRouter({
+  metricsClient: client,
+});
+
+
+const dbIndicator = new DatabaseHealthIndicator({ sequelize });
+
+const healthService = new HealthService({
+  indicators: [dbIndicator]
+});
+
+const healthRouter = new HealthRouter({
+  healthService,
+});
 
 function routerApi(app) {
   const router = express.Router();
@@ -84,6 +107,12 @@ function routerApi(app) {
 
   // Views
   router.use('/', viewRouter.getRouter());
+
+  //metrics
+  router.use('/metrics', metricsRouter.getRouter());
+
+  //// Option B – root-level health check (very common)
+  app.use('/', healthRouter.getRouter());
 }
 
 module.exports = {
