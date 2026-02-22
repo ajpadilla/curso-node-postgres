@@ -1,12 +1,25 @@
-// ecommerce/infrastructure/http/routes/metrics/metrics.router.js
 const express = require('express');
-const client = require('prom-client');
 
-const router = express.Router();
+class MetricsRouter {
+  constructor({ metricsClient }) {
+    this.router = express.Router();
+    this.metricsClient = metricsClient;
 
-router.get('/metrics', async (_, res) => {
-  res.set('Content-Type', client.register.contentType);
-  res.send(await client.register.metrics());
-});
+    this.init();
+  }
 
-module.exports = router;
+  init() {
+    this.router.get('/', this.metrics.bind(this)); // <- just '/'
+  }
+
+  async metrics(_, res) {
+    res.set('Content-Type', this.metricsClient.register.contentType);
+    res.send(await this.metricsClient.register.metrics());
+  }
+
+  getRouter() {
+    return this.router;
+  }
+}
+
+module.exports = MetricsRouter;
