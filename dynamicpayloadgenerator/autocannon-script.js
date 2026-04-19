@@ -1,16 +1,28 @@
-const fs = require('fs');
+const autocannon = require('autocannon');
 
-const TOTAL = 5000; // number of requests you want
+autocannon({
+  url: 'http://localhost:3000',
+  connections: 50,
+  duration: 30,
+  requests: [
+    {
+      method: 'POST',
+      path: '/api/v1/users',
+      setupRequest: (req) => {
+        const uniqueEmail = `test_${process.hrtime.bigint()}@test.com`;
 
-const users = [];
+        req.body = JSON.stringify({
+          email: uniqueEmail,
+          password: '12345678',
+          role: 'customer'
+        });
 
-for (let i = 0; i < TOTAL; i++) {
-  users.push({
-    email: `test_${Date.now()}_${i}@test.com`,
-    password: '12345678',
-    role: 'customer'
-  });
-}
+        req.headers = {
+          'Content-Type': 'application/json'
+        };
 
-fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
-console.log('✅ users.json generated');
+        return req;
+      }
+    }
+  ]
+}, console.log);
