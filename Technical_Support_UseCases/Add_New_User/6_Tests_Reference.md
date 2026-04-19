@@ -10,7 +10,7 @@ Folder: `unit/ecommerce/...`
 
 Files:
 
-- `unit/ecommerce/application/user/user.service.fake.unit.test.js` → tests UserService logic in isolation
+- `unit/ecommerce/application/user/user.service.create.fake.integration.test.js` → tests UserService logic in isolation
   - Confirms email uniqueness
   - Confirms password hashing
   - Uses `toolkit/fakes/fake-password-hasher.js`
@@ -21,7 +21,7 @@ Files:
 How to run:
 
 ```bash
-npm test unit/ecommerce/application/user/user.service.fake.unit.test.js
+npm test unit/ecommerce/application/user/user.service.create.fake.integration.test.js
 ``` 
 
 Notes:
@@ -42,7 +42,7 @@ Files:
 
 - `integration/ecommerce/application/users/users.services.mock.integration.test.js` → mocks external services, tests DB persistence
 - `integration/ecommerce/application/users/user.services.fake.integration.test.js` → end-to-end workflow with fakes
-- `integration/ecommerce/application/users/sequelize.user.real.integration.test.js` → real Sequelize DB test
+- `integration/ecommerce/application/users/sequelize.user.create.real.integration.test.js` → real Sequelize DB test
 
 How to run:
 

@@ -72,7 +72,7 @@ Manual debugging
 
 A fake-based test was created:
 
-user.service.fake.unit.test.js
+user.service.create.fake.integration.test.js
 
 
 Using:
