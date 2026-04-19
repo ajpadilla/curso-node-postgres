@@ -2,7 +2,16 @@
 
 A modular, testable e-commerce backend built with Node.js, PostgreSQL, and Clean Architecture principles.
 
-This project focuses on building reliable, maintainable backend services with strong separation of concerns, automated testing, and scalable infrastructure.
+This project is a backend training system designed to simulate real-world architectural decisions in modern web applications.
+
+Instead of focusing only on CRUD operations, this project explores:
+
+* Clean Architecture principles
+* Domain-driven design boundaries
+* Authentication strategies
+* Observability (metrics, logging, tracing)
+* Testing at multiple levels
+* Performance validation
 
 ---
 
@@ -20,204 +29,293 @@ The system is designed to support future extensions such as orders, payments, an
 
 ---
 
-## 🏗️ Architecture
+## 🚀 Tech Stack
 
-The project follows a layered architecture inspired by Clean Architecture and DDD principles.
+* Node.js (Express)
+* PostgreSQL + Sequelize
+* Docker & Docker Compose
+* Jest (unit, integration, e2e)
+* Playwright (UI testing)
+* Autocannon (performance testing)
+* Prometheus metrics
 
+
+## 🧠 Architecture Overview
+
+The project follows a layered architecture inspired by **Clean Architecture + DDD**:
+
+```
 ecommerce/
-├── application → Use cases and business logic
-├── domain → Core entities and interfaces
-├── infrastructure → Database, security, HTTP, external services
-├── bootstrap → Dependency injection
-
+ ├── domain           → Business rules (pure logic)
+ ├── application      → Use cases (orchestration)
+ ├── infrastructure   → Frameworks, DB, HTTP, external services
+ └── bootstrap        → Dependency injection
+```
 
 ### Key Principles
 
-- Dependency Inversion
-- Separation of Concerns
-- Infrastructure Independence
-- Testability by Design
+* **Domain is isolated** from frameworks
+* **Application layer orchestrates use cases**
+* **Infrastructure implements technical details**
+* **Dependency inversion via container**
 
 ---
 
-## 📂 Project Structure
 
-database/ → Sequelize models, migrations, PostgreSQL config
-ecommerce/ → Core business logic
-shared/ → Cross-cutting abstractions
-test/ → Unit, integration, and E2E tests
-Technical_Support/ → Debugging and support playbooks
-docker-compose.yml → Local development environment
+## 🔐 Authentication
 
+Supports multiple strategies:
 
-### Testing Toolkit
-```
-test/toolkit/
-├── fakes → Fake implementations
-├── builders → Test data builders
-├── fixtures → Static test data
-```
+* JWT authentication
+* Local strategy (email/password)
+* Session-based middleware
 
-Used to isolate domain logic and enable fast automated tests.
+Implemented using a modular Passport setup.
 
 ---
 
-## 📊 Case Study: User Registration
+## 📊 Observability
 
-### Initial Challenges
+The system includes:
 
-The first implementation of user creation:
-
-- Directly depended on Sequelize and bcrypt
-- Exposed ORM internals (`dataValues`)
-- Mixed infrastructure and business logic
-- Was difficult to test in isolation
-
-This increased technical risk and slowed development.
-
----
-
-### Solution
-
-The user registration flow was refactored to:
-
-- Introduce repository and service abstractions
-- Isolate security concerns (password hashing, JWT)
-- Apply Dependency Inversion Principle
-- Use in-memory fakes for testing
-- Add unit and integration test coverage
-
-Key components:
-
-- `UserRepository`
-- `PasswordHasher`
-- `JwtTokenService`
-- Fake and in-memory implementations
-
----
-
-### Result
-
-- Domain logic independent of infrastructure
-- Reliable automated test suite
-- Safer refactoring and deployments
-- Easier extension for authentication and roles
-- Reduced debugging time
-
----
-
-## 📈 Business Impact
-
-User registration is the primary entry point to platform revenue.
-
-This refactor improved:
-
-- Signup reliability and user retention
-- Security of credential handling
-- Development velocity
-- Long-term maintenance cost
-- System stability for scaling
-
-By reducing technical risk, the platform can evolve faster and more safely.
+* Request ID tracking
+* Structured logging (Winston)
+* Prometheus metrics endpoint
+* HTTP request logging middleware
 
 ---
 
 ## 🧪 Testing Strategy
 
-The project includes multiple test layers:
+The project includes multiple testing layers:
 
-### Unit Tests
-- Validate domain and application logic
-- Use fakes and in-memory repositories
+| Type            | Purpose                   |
+| --------------- | ------------------------- |
+| Unit            | Isolated logic validation |
+| Integration     | Component interaction     |
+| E2E             | Full system validation    |
+| UI (Playwright) | Frontend behavior         |
 
-### Integration Tests
-- Validate database and infrastructure
-- Run against Sequelize/PostgreSQL
+---
 
-### E2E Tests
-- Simulate real HTTP workflows
+## ⚡ Performance Testing
 
-Example:
+Performance tests are executed using Autocannon:
+
+```
+dynamicpayloadgenerator/autocannon-script.js
+```
+
+Used to simulate load and analyze:
+
+* Latency
+* Throughput
+* System bottlenecks
+
+---
+
+## 🐳 Running the Project
+
+## 🐳 Running the Project
+
+## 🧩 Available Scripts
+
+| Command               | Description                      |
+| --------------------- | -------------------------------- |
+| `npm run dev`         | Start server in development mode |
+| `npm start`           | Start server in production mode  |
+| `npm test`            | Run unit tests                   |
+| `npm run test:api`    | Run API end-to-end tests         |
+| `npm run test:ui`     | Run UI tests with Playwright     |
+| `npm run db:migrate`  | Run database migrations          |
+| `npm run db:seed:run` | Seed database                    |
+| `npm run db:rebuild`  | Reset and recreate database      |
+
+
+### 📋 Requirements
+
+Make sure you have installed:
+
+* Node.js (>= 18)
+* Docker & Docker Compose
+* npm
+
+---
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repo-url>
+cd my-store
+```
+
+---
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+---
+
+### 3. Start PostgreSQL with Docker
+
+```bash
+docker-compose up -d
+```
+
+This will start a PostgreSQL instance with:
+
+* Database: `my_store`
+* User: `nico`
+* Password: `admin123`
+* Port: `5532`
+
+---
+
+### 4. Configure environment variables
+
+Create a `.env` file in the root:
+
+```bash
+DB_HOST=localhost
+DB_PORT=5532
+DB_NAME=my_store
+DB_USER=nico
+DB_PASSWORD=admin123
+
+JWT_SECRET=your_secret_key
+```
+
+---
+
+### 5. Run database migrations
+
+```bash
+npm run db:migrate
+```
+
+(Optional) Seed data:
+
+```bash
+npm run db:seed:run
+```
+
+---
+
+### 6. Start the application
+
+```bash
+npm run dev
+```
+
+Server will run at:
+
+```
+http://localhost:3000
+```
+
+---
+
+## 🧪 Running Tests
+
+### Unit tests
 
 ```bash
 npm test
-🐳 Development Environment (Docker)
-PostgreSQL is provided via Docker:
-
-services:
-  postgres_node_platzi:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: my_store
-      POSTGRES_USER: nico
-      POSTGRES_PASSWORD: admin123
-    ports:
-      - "5532:5432"
-    volumes:
-      - ./postgres_data:/var/lib/postgresql/data
-Start services:
-
-docker-compose up -d 
 ```
 
-⚙️ Setup
-1. Install Dependencies
-npm install
-2. Configure Environment
-cp config/config.json.example config/config.json
-Edit environment variables as needed.
+### API (E2E) tests
 
-3. Run Migrations
-npm run migrations
-4. Start Server
-npm run dev
-📚 Technical Support Playbooks
-The Technical_Support_UseCases directory contains structured documentation for:
+```bash
+npm run test:api
+```
 
-Expected behavior
+### UI tests (Playwright)
 
-Debugging steps
+```bash
+npm run test:ui
+```
 
-Common errors
+---
 
-Test references
+## ⚡ Performance Testing
 
-Solution flows
+Run load testing using Autocannon:
 
-These documents are used for internal troubleshooting and knowledge sharing.
+```bash
+node dynamicpayloadgenerator/autocannon-script.js
+```
 
-🚧 Current Status
-✅ User registration and authentication
+---
 
-✅ Modular security layer (bcrypt, JWT)
+## 🧹 Code Quality
 
-✅ Repository abstraction
+### Lint
 
-✅ Automated test toolkit
+```bash
+npm run lint
+```
 
-🚧 Orders and payments (planned)
+### Format
 
-🚧 Inventory management (planned)
+```bash
+npm run format
+```
 
-🛠️ Tech Stack
+---
 
-- Node.js
+## 📂 Project Structure Highlights
 
-- Express
+* `ecommerce/` → Core business architecture
+* `shared/` → Cross-cutting concerns
+* `database/` → Sequelize setup and models
+* `test/` → Full testing pyramid
+* `Technical_Support_UseCases/` → Debugging & knowledge base
+* `dynamicpayloadgenerator/` → Performance testing scripts
 
-- PostgreSQL
+---
 
-- Sequelize
+## 🎯 Learning Goals
 
-- JWT
+This project was built to practice:
 
-- Bcrypt
+* Designing scalable backend systems
+* Separating business logic from infrastructure
+* Handling authentication in a modular way
+* Building production-like observability
+* Writing maintainable and testable code
 
-- Jest
+---
 
-- Docker
+## 🧠 Key Takeaways
 
-👨‍💻 Author
+* Architecture decisions impact maintainability more than frameworks
+* Testing strategy is part of system design
+* Observability is not optional in real systems
+* Performance must be measured, not assumed
+
+---
+
+## 📌 Future Improvements
+
+* Event-driven architecture (Kafka / RabbitMQ)
+* CQRS implementation
+* Caching layer (Redis)
+* Horizontal scaling (cluster / workers)
+* CI/CD pipeline
+
+---
+
+## 👨‍💻 Author
+
 Alvaro Padilla
 
-Backend Developer focused on building reliable, testable, and scalable systems.
+Backend Developer focused on:
+
+* Distributed systems
+* System design
+* High-performance Node.js applications
+
+---
