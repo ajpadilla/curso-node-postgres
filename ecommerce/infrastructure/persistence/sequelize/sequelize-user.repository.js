@@ -3,7 +3,8 @@ const { sequelize } = require('../../../../database/sequelize');
 
 class SequelizeUserRepository extends UserRepository {
   async create(data) {
-    return await sequelize.models.User.create(data);
+    const user = await sequelize.models.User.create(data);
+    return user.get({ plain: true }); // always return plain object
   }
 
   async findAll() {

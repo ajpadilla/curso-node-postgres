@@ -1,66 +1,83 @@
 const express = require('express');
 const validatorHandler = require('../../middlewares/validator.handler');
-const { updateUserSchema, createUserSchema, getUserSchema } = require('./user.schema');
-const { httpErrorMapper } = require('../../error-mapper');
-function createUserRouter(userService) {
-  const router = express.Router();
+const {
+  updateUserSchema,
+  createUserSchema,
+  getUserSchema,
+} = require('./user.schema');
+const asyncHandler = require("../../async-handler");
 
-  router.get('/', async (req, res, next) => {
-    try {
-      const users = await userService.find();
-      res.json(users);
-    } catch (error) {
-      next(httpErrorMapper(error));
-    }
-  });
 
-  router.get('/:id', validatorHandler(getUserSchema, 'params'), async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const category = await userService.findOne(id);
-      res.json(category);
-    } catch (error) {
-      next(httpErrorMapper(error));
-    }
-  });
+class UserRouter {
+  constructor({ userService }) {
+    this.router = express.Router();
+    this.service = userService;
 
-  router.post('/', validatorHandler(createUserSchema, 'body'), async (req, res, next) => {
-    try {
-      const body = req.body;
-      const user = await userService.create(body);
-      res.status(201).json(user);
-    } catch (error) {
-      next(httpErrorMapper(error));
-    }
-  });
+    this.initializeRoutes();
+  }
 
-  router.patch(
-    '/:id',
-    validatorHandler(getUserSchema, 'params'),
-    validatorHandler(updateUserSchema, 'body'),
-    async (req, res, next) => {
-      try {
-        const { id } = req.params;
-        const body = req.body;
-        const category = await userService.update(id, body);
-        res.json(category);
-      } catch (error) {
-        next(httpErrorMapper(error));
-      }
-    },
-  );
+  initializeRoutes() {
+    this.router.get('/', asyncHandler(this.find.bind(this)));
 
-  router.delete('/:id', validatorHandler(getUserSchema, 'params'), async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      await userService.delete(id);
-      res.status(201).json({ id });
-    } catch (error) {
-      next(httpErrorMapper(error));
-    }
-  });
+    this.router.get(
+      '/:id',
+      validatorHandler(getUserSchema, 'params'),
+      asyncHandler(this.findOne.bind(this)),
+    );
 
-  return router;
+    this.router.post(
+      '/',
+      validatorHandler(createUserSchema, 'body'),
+      asyncHandler(this.create.bind(this)),
+    );
+
+    this.router.patch(
+      '/:id',
+      validatorHandler(getUserSchema, 'params'),
+      validatorHandler(updateUserSchema, 'body'),
+      asyncHandler(this.update.bind(this)),
+    );
+
+    this.router.delete(
+      '/:id',
+      validatorHandler(getUserSchema, 'params'),
+      asyncHandler(this.delete.bind(this)),
+    );
+  }
+
+  async find(req, res) {
+    const users = await this.service.find();
+    res.status(200).json(users);
+  }
+
+  async findOne(req, res) {
+    const { id } = req.params;
+    const user = await this.service.findOne(id);
+    res.status(200).json(user);
+  }
+
+  async create(req, res) {
+    const body = req.body;
+    const user = await this.service.create(body);
+    res.status(201).json(user);
+  }
+
+  async update(req, res) {
+    const { id } = req.params;
+    const body = req.body;
+    const user = await this.service.update(id, body);
+    res.status(200).json(user);
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    await this.service.delete(id);
+    res.status(204).send();
+  }
+
+  getRouter() {
+    return this.router;
+  }
 }
 
-module.exports = createUserRouter;
+module.exports = UserRouter;

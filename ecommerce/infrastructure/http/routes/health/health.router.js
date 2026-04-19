@@ -9,12 +9,11 @@ class HealthRouter {
   }
 
   init() {
-    this.router.get('/health', this.health.bind(this));
+    this.router.get('/', this.health.bind(this));
   }
 
   async health(_, res) {
     const report = await this.healthService.check();
-
     res
       .status(report.status === 'ok' ? 200 : 503)
       .json({

@@ -1,12 +1,22 @@
-const boom = require('@hapi/boom');
+const ValidationError = require('../../../application/user/errors/validation.error');
 
 function validatorHandler(schema, property) {
   return (req, res, next) => {
     const data = req[property];
-    const { error } = schema.validate(data, { abortEarly: false });
+
+    const { error } = schema.validate(data, {
+      abortEarly: false, // 🔥 collect all errors
+    });
+
     if (error) {
-      next(boom.badRequest(error));
+      const message = error.details
+        .map((err) => err.message)
+        .join('. ');
+
+      // ✅ Convert to your domain error
+      return next(new ValidationError(message));
     }
+
     next();
   };
 }
