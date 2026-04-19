@@ -2,11 +2,8 @@
 const ApplicationError = require('../../errors/application.error');
 
 class ValidationError extends ApplicationError {
-  toHttp() {
-    return {
-      status: 400,
-      message: this.message,
-    };
+  constructor(message) {
+    super(message, 400);
   }
 }
 

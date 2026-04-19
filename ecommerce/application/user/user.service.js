@@ -4,7 +4,7 @@ const ConflictError = require('./errors/conflict.error');
 const ValidationError = require('./errors/validation.error');
 
 class UserService {
-  constructor(userRepository, passwordHasher) {
+  constructor({ userRepository, passwordHasher }) {
     this.userRepository = userRepository;
     this.passwordHasher = passwordHasher;
   }
@@ -12,6 +12,12 @@ class UserService {
   async create(data) {
     if (!data.email) {
       throw new ValidationError('Email is required');
+    }
+
+    const userFound = await this.userRepository.findByEmail(data.email);
+
+    if (userFound?.email === data.email) {
+      throw new ConflictError('Email already registered');
     }
 
     if (!this.passwordHasher) {

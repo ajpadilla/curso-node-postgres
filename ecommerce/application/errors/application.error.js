@@ -1,19 +1,14 @@
 class ApplicationError extends Error {
-  constructor(message) {
+  constructor(message, status = 500) {
     super(message);
-    this.name = this.constructor.name;
+    this.status = status;
   }
 
-  /**
-   * HTTP mapping metadata
-   * Controller will use this blindly
-   */
   toHttp() {
     return {
-      status: 500,
+      status: this.status,
       message: this.message,
     };
   }
 }
-
 module.exports = ApplicationError;

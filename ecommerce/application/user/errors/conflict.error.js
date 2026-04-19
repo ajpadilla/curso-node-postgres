@@ -2,11 +2,8 @@
 const ApplicationError = require('../../errors/application.error');
 
 class ConflictError extends ApplicationError {
-  toHttp() {
-    return {
-      status: 409,
-      message: this.message,
-    };
+  constructor(message) {
+    super(message, 409);
   }
 }
 
