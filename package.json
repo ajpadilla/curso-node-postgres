@@ -21,7 +21,8 @@
     "db:seed:run": "sequelize-cli db:seed:all",
     "db:seed:undo": "sequelize-cli db:seed:undo",
     "db:seed:reset": "sequelize-cli db:seed:undo:all",
-    "db:setup": "npm run db:migrate && npm run db:seed:run"
+    "db:setup": "npm run db:migrate && npm run db:seed:run",
+    "db:rebuild": "npm run db:reset && npm run db:migrate"
   },
   "keywords": [],
   "author": "",
@@ -41,6 +42,7 @@
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
     "@hapi/boom": "^9.1.4",
+    "autocannon": "^8.0.0",
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
