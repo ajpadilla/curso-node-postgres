@@ -1,20 +1,11 @@
 // src/app.js
 const express = require('express');
 const cors = require('cors');
-const {
-  routerApi,
-  errorHandlers,
-  requestId,
-  httpLogger,
-  metricsMiddleware
-}
-  = require('./ecommerce/bootstrap/container');
 const { join } = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
 
-const { logErrors, ormErrorHandler, boomErrorHandler, genericErrorHandler, notFoundHandler } =
-  errorHandlers;
+const { routerApi, middlewares, errorMiddlewares } = require('./ecommerce/bootstrap/container');
 
 function buildApp() {
   const app = express();
@@ -47,16 +38,23 @@ function buildApp() {
   app.use(cors(corsOptions));
   app.use(cookieParser());
 
+  // 1️⃣ Normal middlewares (run for every request)
+  app.use(middlewares.requestId);
+  app.use(middlewares.metricsMiddleware);
+  app.use(middlewares.httpLogger);
+
+  // 2️⃣ Routes
   routerApi(app);
 
-  app.use(logErrors);
-  app.use(requestId.requestId);
-  app.use(metricsMiddleware.metricsMiddleware);
-  app.use(httpLogger.httpLogger);
-  app.use(ormErrorHandler);
-  app.use(boomErrorHandler);
-  app.use(genericErrorHandler);
-  app.use(notFoundHandler);
+  // 2️⃣ 404 (only if NO route matched)
+  app.use(errorMiddlewares.notFoundHandler);
+
+  // 3️⃣ Error middlewares (ONLY for errors)
+  app.use(errorMiddlewares.logErrors);
+  app.use(errorMiddlewares.ormErrorHandler);
+  app.use(errorMiddlewares.errorMapperMiddleware);
+  app.use(errorMiddlewares.boomErrorHandler);
+  app.use(errorMiddlewares.genericErrorHandler);
 
   return app;
 }
