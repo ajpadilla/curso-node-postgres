@@ -3,7 +3,6 @@ const express = require('express');
 const passport = require('passport');
 const client = require('prom-client');
 
-const createUserRouter = require('../infrastructure/http/routes/user/users.router');
 const UserService = require('../application/user/user.service');
 const SequelizeUserRepository = require('../infrastructure/persistence/sequelize/sequelize-user.repository');
 const BcryptPasswordHasher = require('../infrastructure/security/bcrypt.password-hasher');
@@ -27,10 +26,16 @@ const {sequelize} = require("../../database/sequelize");
 const DatabaseHealthIndicator = require("../../shared/application/health/db.health-indicator");
 const HealthService = require("../../shared/application/health/health.service");
 const HealthRouter = require("../infrastructure/http/routes/health/health.router");
+const createErrorMapperMiddleware = require("../infrastructure/http/middlewares/error-mapper.middleware");
+const {httpErrorMapper} = require("../infrastructure/http/error-mapper");
+const UserRouter = require("../infrastructure/http/routes/user/users.router");
 
 const userRepository = new SequelizeUserRepository();
 const bcryptPasswordHasher = new BcryptPasswordHasher();
-const userService = new UserService(userRepository, bcryptPasswordHasher);
+const userService = new UserService({
+  userRepository,
+  passwordHasher: bcryptPasswordHasher
+});
 
 const passwordHasher = new BcryptPasswordHasher();
 const tokenService = new JwtTokenService(process.env.JWT_SECRET);
@@ -65,15 +70,42 @@ const authRouter = new AuthRouter({
   authenticate,
 });
 
+const userRouter = new UserRouter( { userService });
+
+
 const authMiddleware = authSessionMiddleware(authService);
 
 const viewRouter = new ViewRouter({
   authMiddleware,
 });
 
+
+
 const logger = new WinstonLogger();
 
 const errorHandlers = createErrorHandlers(logger);
+const errorMapperMiddleware = createErrorMapperMiddleware({
+  httpErrorMapper,
+});
+
+const {
+  logErrors,
+  ormErrorHandler,
+  boomErrorHandler,
+  genericErrorHandler,
+  notFoundHandler,
+} = errorHandlers;
+
+const errorMiddlewares = {
+  logErrors,
+  ormErrorHandler,
+  errorMapperMiddleware, // 👈 comes from separate factory
+  boomErrorHandler,
+  genericErrorHandler,
+  notFoundHandler,
+};
+
+
 const httpLogger = createHttpLoggerHandler(logger);
 
 const requestIdGenerator = new UuidRequestIdGenerator();
@@ -99,26 +131,30 @@ const healthRouter = new HealthRouter({
   healthService,
 });
 
+const middlewares = {
+  requestId: requestId.requestId,
+  httpLogger: httpLogger.httpLogger,
+  metricsMiddleware: metricsMiddleware.metricsMiddleware,
+}
+
 function routerApi(app) {
   const router = express.Router();
   app.use('/api/v1', router);
-  router.use('/user', createUserRouter(userService));
+  router.use('/users', userRouter.getRouter());
   router.use('/auth', authRouter.getRouter());
 
   // Views
   router.use('/', viewRouter.getRouter());
 
-  //metrics
+  //Metrics
   router.use('/metrics', metricsRouter.getRouter());
 
-  //// Option B – root-level health check (very common)
-  app.use('/', healthRouter.getRouter());
+  // Health
+  app.use('/health', healthRouter.getRouter());
 }
 
 module.exports = {
   routerApi,
-  errorHandlers,
-  requestId,
-  httpLogger,
-  metricsMiddleware
+  middlewares,
+  errorMiddlewares,
 };
