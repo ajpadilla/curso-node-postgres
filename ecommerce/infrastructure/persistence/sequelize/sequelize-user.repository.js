@@ -10,7 +10,6 @@ class SequelizeUserRepository extends UserRepository {
   async findAll() {
     return await sequelize.models.User.findAll({
       attributes: { exclude: ['password'] },
-      include: ['customer'],
     });
   }
 

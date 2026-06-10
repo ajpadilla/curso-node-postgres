@@ -14,13 +14,11 @@ class HealthRouter {
 
   async health(_, res) {
     const report = await this.healthService.check();
-    res
-      .status(report.status === 'ok' ? 200 : 503)
-      .json({
-        status: report.status,
-        ...report.details,
-        uptime: report.uptime,
-      });
+    res.status(report.status === 'ok' ? 200 : 503).json({
+      status: report.status,
+      ...report.details,
+      uptime: report.uptime,
+    });
   }
 
   getRouter() {

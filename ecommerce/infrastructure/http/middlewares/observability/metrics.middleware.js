@@ -4,19 +4,19 @@ function createMetricsMiddleware({ metrics }) {
     const start = process.hrtime.bigint();
 
     res.on('finish', () => {
-      const duration =
-        Number(process.hrtime.bigint() - start) / 1e6;
+      const duration = Number(process.hrtime.bigint() - start) / 1e9;
 
-      metrics.increment('http_requests_total', {
-        method: req.method,
-        route: req.route?.path || 'unknown',
-        status: res.statusCode
-      });
+      const route = req.baseUrl + (req.route?.path || '');
 
-      metrics.observe('http_request_duration_ms', duration, {
+      const labels = {
         method: req.method,
-        status: res.statusCode
-      });
+        route,
+        status: String(res.statusCode),
+      };
+
+      metrics.increment('http_requests_total', labels);
+
+      metrics.observe('http_request_duration_seconds', duration, labels);
     });
 
     next();

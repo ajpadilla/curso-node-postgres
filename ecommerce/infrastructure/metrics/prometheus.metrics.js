@@ -1,4 +1,3 @@
-// shared/infrastructure/metrics/prometheus.metrics.js
 const client = require('prom-client');
 const Metrics = require('../../../shared/domain/metrics.port');
 
@@ -16,7 +15,7 @@ class PrometheusMetrics extends Metrics {
       this.counters[name] = new client.Counter({
         name,
         help: name,
-        labelNames: Object.keys(tags)
+        labelNames: Object.keys(tags),
       });
     }
 
@@ -25,11 +24,18 @@ class PrometheusMetrics extends Metrics {
 
   observe(name, value, tags = {}) {
     if (!this.histograms[name]) {
-      this.histograms[name] = new client.Histogram({
+      const histogramOptions = {
         name,
         help: name,
-        labelNames: Object.keys(tags)
-      });
+        labelNames: Object.keys(tags),
+      };
+
+      // Special configuration for HTTP latency
+      if (name === 'http_request_duration_seconds') {
+        histogramOptions.buckets = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2, 5];
+      }
+
+      this.histograms[name] = new client.Histogram(histogramOptions);
     }
 
     this.histograms[name].observe(tags, value);
@@ -40,7 +46,7 @@ class PrometheusMetrics extends Metrics {
       this.gauges[name] = new client.Gauge({
         name,
         help: name,
-        labelNames: Object.keys(tags)
+        labelNames: Object.keys(tags),
       });
     }
 

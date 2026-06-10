@@ -1,12 +1,7 @@
 const express = require('express');
 const validatorHandler = require('../../middlewares/validator.handler');
-const {
-  updateUserSchema,
-  createUserSchema,
-  getUserSchema,
-} = require('./user.schema');
-const asyncHandler = require("../../async-handler");
-
+const { updateUserSchema, createUserSchema, getUserSchema } = require('./user.schema');
+const asyncHandler = require('../../async-handler');
 
 class UserRouter {
   constructor({ userService }) {

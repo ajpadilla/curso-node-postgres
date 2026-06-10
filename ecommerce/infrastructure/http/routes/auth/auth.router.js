@@ -1,5 +1,4 @@
 const express = require('express');
-const { httpErrorMapper } = require('../../error-mapper');
 
 class AuthRouter {
   constructor({ authService, authenticate }) {
@@ -33,7 +32,7 @@ class AuthRouter {
       res.status(200).json({ token });
     } catch (error) {
       // eslint-disable-next-line no-console
-      next(httpErrorMapper(error));
+      next(error);
     }
   }
 

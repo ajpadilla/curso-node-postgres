@@ -9,9 +9,7 @@ function validatorHandler(schema, property) {
     });
 
     if (error) {
-      const message = error.details
-        .map((err) => err.message)
-        .join('. ');
+      const message = error.details.map((err) => err.message).join('. ');
 
       // ✅ Convert to your domain error
       return next(new ValidationError(message));
