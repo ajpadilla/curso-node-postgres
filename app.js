@@ -5,7 +5,11 @@ const { join } = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
 
-const { routerApi, middlewares, errorMiddlewares } = require('./ecommerce/bootstrap/container');
+const {
+  registerRoutes,
+  middlewares,
+  errorMiddlewares,
+} = require('./ecommerce/bootstrap/container');
 
 function buildApp() {
   const app = express();
@@ -44,7 +48,7 @@ function buildApp() {
   app.use(middlewares.httpLogger);
 
   // 2️⃣ Routes
-  routerApi(app);
+  registerRoutes(app);
 
   // 2️⃣ 404 (only if NO route matched)
   app.use(errorMiddlewares.notFoundHandler);
