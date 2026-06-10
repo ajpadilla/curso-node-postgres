@@ -1,4 +1,5 @@
 const request = require('supertest');
+const bcrypt = require('bcrypt');
 
 const buildApp = require('../../../app');
 const { User } = require('../../../database/models/user.model');
@@ -10,7 +11,7 @@ describe('Auth E2E - Login', () => {
 
   beforeAll(() => {
     app = buildApp();
-    server = app.listen(0); // random free port
+    server = app.listen(0);
   });
 
   afterAll(async () => {
@@ -19,29 +20,44 @@ describe('Auth E2E - Login', () => {
   });
 
   beforeEach(async () => {
-    await User.destroy({ where: {}, truncate: true, cascade: true });
+    await User.destroy({
+      where: {},
+      truncate: true,
+      cascade: true,
+    });
   });
 
   test('should return JWT when credentials are valid', async () => {
-    await request(app)
-      .post('/api/v1/user')
-      .send({ email: 'login@test.com', password: '12345678', role: 'customer' })
-      .expect(201);
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
+    await User.create({
+      email: 'admin@test.com',
+      password: hashedPassword,
+      role: 'admin',
+    });
 
     const response = await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'login@test.com', password: '12345678' })
+      .send({
+        email: 'admin@test.com',
+        password: 'password123',
+      })
       .expect(200);
 
     expect(response.body).toHaveProperty('token');
+
     expect(typeof response.body.token).toBe('string');
+
     expect(response.body.token.length).toBeGreaterThan(20);
   });
 
   test('should return 401 when credentials are invalid', async () => {
     await request(app)
       .post('/api/v1/auth/login')
-      .send({ email: 'login@test.com', password: 'wrongpass' })
+      .send({
+        email: 'login@test.com',
+        password: 'wrongpass',
+      })
       .expect(401);
   });
 });

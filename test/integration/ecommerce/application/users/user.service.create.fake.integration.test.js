@@ -7,7 +7,7 @@ describe('UserService (unit)', () => {
     const userRepository = new InMemoryUserRepository();
     const passwordHasher = new FakePasswordHasher();
 
-    const userService = new UserService(userRepository, passwordHasher);
+    const userService = new UserService({ userRepository, passwordHasher });
 
     const user = await userService.create({
       email: 'test@test.com',

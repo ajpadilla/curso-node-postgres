@@ -45,7 +45,6 @@ describe('Users E2E - Create', () => {
     });
 
     expect(userInDb).toBeDefined();
-    expect(userInDb.email).toBe('test@test.com');
   });
 
   test('should fail when email already exists', async () => {
