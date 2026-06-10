@@ -11,6 +11,7 @@ class AuthService {
 
   async authenticate(email, password) {
     const user = await this.userRepository.findByEmail(email);
+
     if (!user) {
       throw new UnauthorizedError('Unauthorized User');
     }

@@ -1,46 +1,24 @@
-const express =
-  require('express');
+const express = require('express');
 
-module.exports =
-  function bootstrapRouter({
-                             app,
-                             userRouter,
-                             authRouter,
-                             viewRouter,
-                             metricsRouter,
-                             healthRouter,
-                           }) {
+module.exports = function bootstrapRouter({
+  app,
+  userRouter,
+  authRouter,
+  viewRouter,
+  metricsRouter,
+  healthRouter,
+}) {
+  const router = express.Router();
 
-    const router =
-      express.Router();
+  app.use('/api/v1', router);
 
-    app.use(
-      '/api/v1',
-      router
-    );
+  router.use('/users', userRouter.getRouter());
 
-    router.use(
-      '/users',
-      userRouter.getRouter()
-    );
+  router.use('/auth', authRouter.getRouter());
 
-    router.use(
-      '/auth',
-      authRouter.getRouter()
-    );
+  router.use('/', viewRouter.getRouter());
 
-    router.use(
-      '/',
-      viewRouter.getRouter()
-    );
+  app.use('/metrics', metricsRouter.getRouter());
 
-    router.use(
-      '/metrics',
-      metricsRouter.getRouter()
-    );
-
-    app.use(
-      '/health',
-      healthRouter.getRouter()
-    );
-  };
+  app.use('/health', healthRouter.getRouter());
+};
