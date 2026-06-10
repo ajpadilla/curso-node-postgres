@@ -1,4 +1,4 @@
-const HealthReport = require("./health-report");
+const HealthReport = require('./health-report');
 
 class HealthService {
   constructor({ indicators }) {
@@ -21,7 +21,7 @@ class HealthService {
     return new HealthReport({
       status,
       details,
-      uptime: Math.floor(process.uptime())
+      uptime: Math.floor(process.uptime()),
     });
   }
 }

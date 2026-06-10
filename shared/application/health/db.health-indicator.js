@@ -1,6 +1,6 @@
-const HealthIndicator = require("./health-indicator");
+const HealthIndicator = require('./health-indicator');
 
-class DatabaseHealthIndicator extends HealthIndicator{
+class DatabaseHealthIndicator extends HealthIndicator {
   constructor({ sequelize }) {
     super();
     this.name = 'db';
