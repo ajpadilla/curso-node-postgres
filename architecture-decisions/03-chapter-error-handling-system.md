@@ -1,6 +1,6 @@
 # **Chapter Two: Error Handling System**
 
-# From Try-Catch Everywhere to Centralized Error Handling in Node.js
+## From Try-Catch Everywhere to Centralized Error Handling in Node.js
 
 After spending years writing `try-catch` everywhere, I realized something important:
 
