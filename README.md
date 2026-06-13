@@ -245,7 +245,7 @@ npm run test:ui
 Run load testing using Autocannon:
 
 ```bash
-node dynamicpayloadgenerator/autocannon-script.js
+node load-testing/autocannon-script.js
 ```
 
 ---
