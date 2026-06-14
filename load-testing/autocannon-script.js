@@ -1,13 +1,13 @@
 const autocannon = require('autocannon');
-const WinstonLogger = require('/ecommerce/infrastructure/logger/WinstonLogger');
+const WinstonLogger = require('../ecommerce/infrastructure/logger/WinstonLogger');
 
 const logger = new WinstonLogger();
 
 autocannon(
   {
     url: 'http://localhost:3000',
-    connections: 1,
-    duration: 5,
+    connections: 50,
+    duration: 30,
     requests: [
       {
         method: 'POST',
