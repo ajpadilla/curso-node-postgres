@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONTAINER="postgres_node_platzi"
+SERVICE="postgres_node_platzi"
 USER="nico"
 DATABASE="my_store"
 
@@ -11,5 +11,5 @@ if [ -z "$FILE" ]; then
   exit 1
 fi
 
-docker exec -i "$CONTAINER" \
+docker-compose exec -T "$SERVICE" \
   psql -U "$USER" -d "$DATABASE" < "$FILE"
