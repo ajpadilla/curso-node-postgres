@@ -1,0 +1,24 @@
+[Unit]
+Description=Ecommerce API
+After=network.target
+
+[Service]
+Type=simple
+
+User=deploy
+Group=ecommerce-api
+
+WorkingDirectory=/opt/ecommerce-api/current
+
+EnvironmentFile=/opt/ecommerce-api/shared/.env
+
+ExecStart=/usr/bin/node app.js
+
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
