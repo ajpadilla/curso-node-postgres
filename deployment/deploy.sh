@@ -34,7 +34,7 @@ DEPLOY_USER="deploy"
 
 SERVICE_NAME="$APP_NAME"
 
-REPO_URL="git@github.com:YOUR_USERNAME/ecommerce-api.git"
+REPO_URL="git@github.com:ajpadilla/shopcore-api.git"
 
 KEEP_RELEASES=5
 
@@ -70,10 +70,10 @@ verify_github() {
 
     section "Verifying GitHub access"
 
-    sudo -u "$DEPLOY_USER" \
+    run sudo -H -u "$DEPLOY_USER" \
         ssh \
         -T \
-        git@github.com || true
+        git@github.com
 
 }
 
@@ -85,7 +85,7 @@ clone_repository() {
 
     section "Cloning repository"
 
-    run sudo -u "$DEPLOY_USER" \
+    run sudo -H -u "$DEPLOY_USER" \
         git clone \
         "$REPO_URL" \
         "$RELEASE_DIR"
@@ -102,7 +102,7 @@ install_dependencies() {
 
     cd "$RELEASE_DIR"
 
-    run sudo -u "$DEPLOY_USER" npm ci
+    run sudo -H -u "$DEPLOY_USER" npm ci
 
 }
 
@@ -116,7 +116,7 @@ run_tests() {
 
     cd "$RELEASE_DIR"
 
-    run sudo -u "$DEPLOY_USER" npm test
+    run sudo -H -u "$DEPLOY_USER" npm test
 
 }
 
@@ -124,23 +124,23 @@ run_tests() {
 # Build application
 ############################################################
 
-build_application() {
+#build_application() {
 
-    section "Building application"
+#    section "Building application"
 
-    cd "$RELEASE_DIR"
+#    cd "$RELEASE_DIR"
 
-    if npm run | grep -q " build"; then
+#    if npm run | grep -q " build"; then
 
-        run sudo -u "$DEPLOY_USER" npm run build
+#        run sudo -H -u "$DEPLOY_USER" npm run build
 
-    else
+#    else
 
-        warn "No build script found."
+#        warn "No build script found."
 
-    fi
+#    fi
 
-}
+#}
 
 ############################################################
 # Production dependencies
@@ -152,7 +152,7 @@ optimize_dependencies() {
 
     cd "$RELEASE_DIR"
 
-    run sudo -u "$DEPLOY_USER" \
+    run sudo -H -u "$DEPLOY_USER" \
         npm prune --omit=dev
 
 }
@@ -225,15 +225,15 @@ health_check() {
 # Cleanup
 ############################################################
 
-cleanup_releases() {
+#cleanup_releases() {
 
-    section "Removing old releases"
+#    section "Removing old releases"
 
-    ls -dt "$RELEASES_DIR"/* \
-        | tail -n +$((KEEP_RELEASES + 1)) \
-        | xargs -r rm -rf
+#    ls -dt "$RELEASES_DIR"/* \
+#        | tail -n +$((KEEP_RELEASES + 1)) \
+#       | xargs -r rm -rf
 
-}
+#}
 
 ############################################################
 # Summary
@@ -267,7 +267,7 @@ main() {
 
     run_tests
 
-    build_application
+    #build_application
 
     optimize_dependencies
 
@@ -279,7 +279,7 @@ main() {
 
     health_check
 
-    cleanup_releases
+    #cleanup_releases
 
     summary
 

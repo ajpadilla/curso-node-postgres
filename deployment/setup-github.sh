@@ -101,7 +101,8 @@ configure_ssh() {
 
     cat > "$SSH_DIR/config" <<EOF
 Host github.com
-    HostName github.com
+    HostName ssh.github.com
+    Port 443
     User git
     IdentityFile ~/.ssh/id_ed25519
     IdentitiesOnly yes
@@ -157,18 +158,21 @@ verify_connection() {
 
     section "Testing GitHub connection"
 
-    sudo -u "$USERNAME" \
-        ssh \
-        -T \
-        -o StrictHostKeyChecking=accept-new \
-        git@github.com || true
+    if sudo -H -u "$USERNAME" \
+        git \
+        -c core.sshCommand="ssh -o StrictHostKeyChecking=accept-new" \
+        ls-remote \
+        "$REPO_URL" \
+        >/dev/null 2>&1
+    then
 
-    echo
+        success "GitHub repository access verified."
 
-    read -rp "Did GitHub authentication succeed? [y/N]: " answer
+    else
 
-    [[ "$answer" =~ ^[Yy]$ ]] \
-        || error "GitHub authentication failed."
+        error "Unable to access GitHub repository: $REPO_URL"
+
+    fi
 
 }
 
