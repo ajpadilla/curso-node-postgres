@@ -68,13 +68,15 @@ validate() {
 
 verify_github() {
 
-    section "Verifying GitHub access"
+    section "Verifying GitHub repository access"
 
     run sudo -H -u "$DEPLOY_USER" \
-        ssh \
-        -T \
-        git@github.com
+        git ls-remote \
+        "$REPO_URL" \
+        HEAD \
+        >/dev/null
 
+    success "GitHub repository access verified."
 }
 
 ############################################################
