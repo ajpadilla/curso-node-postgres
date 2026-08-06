@@ -34,6 +34,9 @@ PRIVATE_KEY="$SSH_DIR/id_ed25519"
 
 PUBLIC_KEY="$PRIVATE_KEY.pub"
 
+REPO_URL="git@github.com:ajpadilla/shopcore-api.git"
+
+
 ############################################################
 # Validation
 ############################################################
