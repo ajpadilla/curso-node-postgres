@@ -269,6 +269,8 @@ install_dependencies() {
 
     section "Installing production dependencies"
 
+    log
+
     cd "$RELEASE_DIR"
 
     run sudo -H -u "$DEPLOY_USER" \
@@ -324,10 +326,10 @@ run_migrations() {
 
     section "Running production database migrations"
 
-    cd "$RELEASE_DIR"
+    log "Release directory: $RELEASE_DIR"
 
     run sudo -H -u "$DEPLOY_USER" \
-        npm run db:migrate
+        bash -c "cd '$RELEASE_DIR' && npm run db:migrate"
 
     success "Production database migrations completed."
 }
