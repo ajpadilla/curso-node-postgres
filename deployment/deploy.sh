@@ -269,8 +269,6 @@ install_dependencies() {
 
     section "Installing production dependencies"
 
-    log
-
     cd "$RELEASE_DIR"
 
     run sudo -H -u "$DEPLOY_USER" \
