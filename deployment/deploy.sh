@@ -68,6 +68,8 @@ SERVICE_NAME="$APP_NAME"
 
 REPO_URL="git@github.com:ajpadilla/shopcore-api.git"
 
+DEPLOY_BRANCH="develop"
+
 KEEP_RELEASES=5
 
 HEALTH_URL="http://localhost:3000/health"
@@ -244,12 +246,18 @@ clone_repository() {
 
     section "Cloning repository"
 
+    log "Repository : $REPO_URL"
+    log "Branch     : $DEPLOY_BRANCH"
+    log "Destination: $RELEASE_DIR"
+
     run sudo -H -u "$DEPLOY_USER" \
         git clone \
+        --branch "$DEPLOY_BRANCH" \
+        --single-branch \
         "$REPO_URL" \
         "$RELEASE_DIR"
 
-    success "Repository cloned."
+    success "Repository cloned successfully."
 }
 
 
