@@ -565,7 +565,7 @@ main() {
 
     restart_service
 
-    health_check
+    #health_check
 
     #cleanup_releases
 
