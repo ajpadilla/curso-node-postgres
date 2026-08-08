@@ -325,11 +325,11 @@ run_migrations() {
     section "Running production database migrations"
 
     log "Release directory: $RELEASE_DIR"
+    log "Environment: production"
 
     run sudo -H -u "$DEPLOY_USER" \
-        bash -c "cd '$RELEASE_DIR' && npm run db:migrate"
+        bash -c "cd '$RELEASE_DIR' && NODE_ENV=production npm run db:migrate"
 
-    success "Production database migrations completed."
 }
 
 
